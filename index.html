@@ -4,24 +4,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Кабинет мастера</title>
+    <title>ЧАСТНЫЙ МАСТЕР</title>
 
     <style>
-        /* style.css */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* ===== НЕОМОРФИЗМ ===== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+        body {
+            background: #eef1f5;
+            /* background: #e7ebf0; */
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+            padding: 1rem;
+            position: relative;
+            overflow-x: hidden;
+        }
 
-body {
-    background: #d9e0ec;
-    min-height: 100vh;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    padding: 1rem;
-}
+        /* Canvas для абстрактных пятен */
+        #backgroundCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
 
         /* Красивый скроллбар */
         ::-webkit-scrollbar {
@@ -45,103 +56,677 @@ body {
             background: rgba(255, 255, 255, 1);
         }
 
-/* ===== ЭКРАН АВТОРИЗАЦИИ ===== */
-.auth-screen {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: #d9e0ec;
-}
+        /* Основной контейнер с левым сайдбаром */
+        .main-layout {
+            display: flex;
+            gap: 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
 
-.auth-card {
-    background: #ecf1f8;
-    border-radius: 2rem;
-    padding: 2.5rem;
-    width: 100%;
-    max-width: 400px;
-    outline: 2px solid #a8b5cd27;
-    box-shadow: 
-        -0.7rem -0.7rem 1.2rem #ffffff7a,
-        0.9rem 0.9rem 1.8rem #a8b5cd,
-        inset -0.2rem -0.2rem 0.5rem #c0cde0,
+        /* Левый сайдбар (50px) */
+        .sidebar {
+            width: auto;
+            background: #f1f5f9;
+            border-radius: 20px;
+            padding: 10px;
+            /* padding: 1.5rem 0; */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 
+                -0.3rem -0.3rem 0.6rem #ffffff,
+                0.3rem 0.3rem 0.6rem #b8c4d4;
+            height: fit-content;
+            position: sticky;
+            top: 3rem;
+            margin: 0;
+            /* left: 0; */
+        }
+
+        .sidebar-item {
+            width: 40px;
+            height: 40px;
+            border-radius: 1rem;
+            background: #f1f5f9;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                -0.2rem -0.2rem 0.4rem #ffffff,
+                0.2rem 0.2rem 0.4rem #b8c4d4;
+            transition: all 0.1s ease;
+            color: #4a6f8c;
+        }
+
+        .sidebar-item.active {
+            background: #d6e4f0;
+            box-shadow: 
+                inset 0.1rem 0.1rem 0.3rem #b8c4d4,
+                inset -0.1rem -0.1rem 0.3rem #ffffff;
+        }
+
+        .sidebar-item:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Основной контент */
+        .content {
+            flex: 1;
+            padding-bottom: 130px;
+            /* max-width: 70%; */
+            /* background-color: #2ecc71; */
+        }
+
+        /* Страницы */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .master-title {
+            text-align: center;
+            font-size: 3.5rem;
+            font-weight: bolder;
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            text-transform: uppercase;
+            color: #011b2e;
+            /* text-shadow: 
+                0.3rem 0.3rem 0.6rem #bac4d4,
+                -0.3rem -0.3rem 0.8rem #f0f6ff; */
+            margin-bottom: 1rem;
+            word-break: break-word;
+        }
+
+        c
+        {
+            color: #41affe;
+            font-weight: blod;
+        }
+
+        .board {
+
+            border-radius: 2rem;
+            scale: 0.85;
+            box-shadow: 
+                0.9rem 0.9rem 1.8rem #bac4d4,
+                -0.9rem -0.9rem 1.8rem #f0f6ff;
+        }
+
+        .plates {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2.5rem;
+            margin: 1rem 0;
+        }
+
+        .plate {
+            width: 200px;
+            height: 200px;
+            /* background: #c6d2e0; */
+            background: #f1f5f9;
+            border-radius: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 
+                -0.7rem -0.7rem 1.2rem #ffffff49,
+                0.9rem 0.9rem 1.8rem #b8c4d4,
+                inset -0.2rem -0.2rem 0.5rem #c0cde0,
+                inset 0.3rem 0.3rem 0.6rem #ffffff;
+            transition: all 0.1s ease;
+            border: none;
+            outline: 1px solid rgba(0, 0, 0, 0.047);
+            position: relative;
+        }
+
+        .plate:hover {
+            transform: translateY(-0.3rem);
+            box-shadow: 
+        -0.7rem -0.7rem 1.2rem #ffffff49,
+        1.5rem 1.5rem 2rem #a8cbe4bf,
+        0.5rem 0.5rem 1rem #73c1f86b,
+        inset -0.2rem -0.2rem 0.5rem #afbccc,
         inset 0.3rem 0.3rem 0.6rem #ffffff;
+        }
+
+        .plate:active {
+            transform: translateY(0.2rem);
+            box-shadow: 
+                -0.4rem -0.4rem 0.8rem #ffffff,
+                0.5rem 0.5rem 1.2rem #b8c4d4,
+                inset 0.2rem 0.2rem 0.6rem #b8c4d4,
+                inset -0.2rem -0.2rem 0.4rem #ffffff;
+        }
+
+        .plate-icon {
+            font-size: 4rem;
+            line-height: 1;
+            margin-bottom: 0.8rem;
+            color: #4a6f8c;
+            filter: drop-shadow(0.2rem 0.2rem 0.3rem #b8c4d4);
+        }
+
+        .plate-text {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #4a6f8c;
+        }
+
+        /* ===== СТРАНИЦА ОБЩЕНИЯ ===== */
+        .chat-page {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Карточка мастера */
+        .master-card {
+            background: #e8edf3;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 
+                -0.7rem -0.7rem 1.2rem #ffffff,
+                0.9rem 0.9rem 1.8rem #b8c4d4;
+        }
+
+        .master-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .master-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #a0c0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 
+                0.2rem 0.2rem 0.5rem #b8c4d4,
+                -0.2rem -0.2rem 0.5rem #ffffff;
+        }
+
+        .master-info {
+            flex: 1;
+        }
+
+        .master-name-row {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.3rem;
+        }
+
+        .master-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2c3e4f;
+        }
+
+        .rating {
+            background: #e0e8f0;
+            padding: 0.3rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2c3e4f;
+            box-shadow: inset 0.1rem 0.1rem 0.2rem #b8c4d4,
+                        inset -0.1rem -0.1rem 0.2rem #ffffff;
+        }
+
+        .status {
+            color: #2ecc71;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .specialization {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .spec-tag {
+            background: #e0e8f0;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            color: #2c3e4f;
+            box-shadow: 
+                inset 0.1rem 0.1rem 0.2rem #ffffff,
+                inset -0.1rem -0.1rem 0.2rem #b8c4d4;
+        }
+
+        .expand-btn {
+            background: none;
+            border: none;
+            color: #4a6f8c;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.5rem 0;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .master-details {
+            display: none;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #d6e0ec;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .master-details.expanded {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2c3e4f;
+            margin: 1rem 0 0.8rem;
+        }
+
+        .about-text {
+            color: #4a6f8c;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Две колонки */
+        .two-columns {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .chat-column, .checkout-column {
+            flex: 1;
+            width: 50%;
+        }
+
+        /* Чат */
+        .chat-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e4f;
+            margin-bottom: 1rem;
+        }
+
+        .chat-messages {
+            background: #e9eff3;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            height: 330px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            box-shadow: 
+                inset 0.2rem 0.2rem 0.5rem #b8c4d4,
+                inset -0.2rem -0.2rem 0.5rem #ffffff;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .message.master {
+            background: #8fb0d0;
+            color: white;
+            align-self: flex-start;
+            box-shadow: 0.2rem 0.2rem 0.5rem #b8c4d4;
+        }
+
+        .message.client {
+            background: #ffffff;
+            color: #2c3e4f;
+            align-self: flex-end;
+            box-shadow: 0.2rem 0.2rem 0.5rem #b8c4d4;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 3rem;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            box-shadow: 
+                inset 0.2rem 0.2rem 0.5rem #b8c4d4,
+                inset -0.2rem -0.2rem 0.5rem #ffffff;
+            outline: none;
+            color: #2c3e4f;
+        }
+
+        .send-btn {
+            background: #f1f5f9;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 
+                -0.2rem -0.2rem 0.4rem #ffffff,
+                0.2rem 0.2rem 0.4rem #b8c4d4;
+        }
+
+        /* Чек-билдер */
+        .checkout-items {
+            background: #e9edf1;
+            border-radius: 1.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 
+                inset 0.2rem 0.2rem 0.5rem #b8c4d4,
+                inset -0.2rem -0.2rem 0.5rem #ffffff;
+            max-height: 330px;
+            overflow-y: auto;
+        }
+
+        .checkout-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: #f1f5f9;
+            border-radius: 1.2rem;
+            box-shadow: 
+                -0.2rem -0.2rem 0.4rem #ffffff,
+                0.2rem 0.2rem 0.4rem #b8c4d4;
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+
+        .checkout-item:active {
+            box-shadow: 
+                inset 0.2rem 0.2rem 0.4rem #b8c4d4,
+                inset -0.2rem -0.2rem 0.4rem #ffffff;
+        }
+
+        .checkout-item input[type="checkbox"] {
+            width: 1.2rem;
+            height: 1.2rem;
+            margin-right: 1rem;
+            accent-color: #8fb0d0;
+            pointer-events: none;
+        }
+
+        .checkout-item-name {
+            flex: 1;
+
+            color: #4a6f8c;
+            font-weight: 500;
+        }
+
+        .checkout-item-price {
+            font-weight: 700;
+
+            color: #2c3e4f;
+            margin-left: 3px;   /* фиксированный отступ */
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: #f1f5f9;
+            border-radius: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 
+                -0.2rem -0.2rem 0.4rem #ffffff,
+                0.2rem 0.2rem 0.4rem #b8c4d4;
+        }
+
+        .total-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2c3e4f;
+        }
+
+        .order-btn {
+            width: 100%;
+            background: #8fb0d0;
+            color: white;
+            border: none;
+            border-radius: 3rem;
+            padding: 1rem;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 
+                0.3rem 0.3rem 0.6rem #b8c4d4,
+                -0.2rem -0.2rem 0.4rem #ffffff;
+        }
+
+        /* ===== СТРАНИЦА ЗАКАЗА ===== */
+        .order-page {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .order-card {
+            background: #f1f5f9;
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: 
+                -0.7rem -0.7rem 1.2rem #ffffff,
+                0.9rem 0.9rem 1.8rem #b8c4d4;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .order-status {
+            background: #2ecc71;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+        }
+
+        .order-items {
+            margin: 2rem 0;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid #d6e0ec;
+        }
+
+        .progress-bar {
+            background: #e0e8f0;
+            height: 10px;
+            border-radius: 5px;
+            margin: 2rem 0;
+            box-shadow: inset 0.1rem 0.1rem 0.2rem #b8c4d4;
+        }
+
+        .progress-fill {
+            width: 60%;
+            height: 100%;
+            background: #8fb0d0;
+            border-radius: 5px;
+            box-shadow: 0.2rem 0.2rem 0.4rem #b8c4d4;
+        }
+
+        /* Адаптив */
+        @media (max-width: 768px) {
+            .main-layout {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                justify-content: center;
+                position: static;
+            }
+            
+            .two-columns {
+                flex-direction: column;
+            }
+            
+            .chat-column, .checkout-column {
+                width: 100%;
+            }
+
+            .board {
+            /* background: #e2e8f0; */
+            border-radius: 2rem;
+            width: 100%;
+            }
+
+            .plates {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+            gap: 0rem;
+
+        }
+            
+            .plate {
+                width: 120px;
+                height: 120px;
+                margin: 5px;
+            }
+
+            .master-title {
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+
+            /* text-shadow: 
+                0.3rem 0.3rem 0.6rem #bac4d4,
+                -0.3rem -0.3rem 0.8rem #f0f6ff; */
+            margin-bottom: 1rem;
+            word-break: break-word;
+            }
+
+            .checkout-item-name {
+                font-size: 13px;
+            }
+
+            .checkout-item-price {
+                font-size: 12px;
+            }
+            .checkout-item {
+                padding: 8px;
+            }
+        }
+        
+    </style>
+
+    <style>
+        #nameForm {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    width: 90%;
+    max-width: 400px;
 }
 
-.auth-card h2 {
-    text-align: center;
-    color: #2c3e4f;
-    margin-bottom: 2rem;
-    font-size: 1.5rem;
+#nameForm .board {
+    box-shadow: none;
+    /* box-shadow: 0.9rem 0.9rem 1.8rem #bac4d4,
+     -0.9rem -0.9rem 1.8rem #f0f6ff; */
 }
 
-.auth-tabs {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-    background: #eaf0fa;
-    padding: 0.3rem;
-    border-radius: 3rem;
-    box-shadow: 
-        inset 0.1rem 0.1rem 0.3rem #a8b5cd,
-        inset -0.1rem -0.1rem 0.3rem #ffffff;
+#restoreForm {
+    position: fixed;
+    z-index: 1000;  /* должно быть больше, чем у оверлея */
+}
+#restoreForm .board {
+    box-shadow: none;
 }
 
-.auth-tab {
-    flex: 1;
-    padding: 0.8rem;
-    border: none;
-    background: transparent;
-    border-radius: 2rem;
-    font-weight: 600;
-    color: #4d5f84;
-    cursor: pointer;
-    transition: all 0.1s ease;
-}
+    </style>
 
-.auth-tab.active {
-    background: #eaf0fa;
-    box-shadow: 
-        -0.2rem -0.2rem 0.4rem #ffffff,
-        0.2rem 0.2rem 0.4rem #a8b5cd;
+    <style>
+        .plate.active-plate {
+    box-shadow: 0 0 0 2px #4a6f8c;
+    transform: scale(1.02);
 }
+    </style>
 
+    <style>
 .form-group {
-    margin-bottom: 1.2rem;
+    margin-bottom: 1.5rem;  /* отступ после инпута */
 }
 
 .form-label {
     display: block;
+    margin-bottom: 0.5rem;   /* отступ между надписью и инпутом */
     color: #4d5f84;
-    margin-bottom: 0.3rem;
     font-weight: 500;
 }
 
-.form-input, .form-textarea {
+.fancy-input {
     width: 100%;
-    padding: 0.8rem 1rem;
-    background: #eaf0fa;
+    padding: 1rem 1.2rem;
+    background: #f5f9ff;
     border: none;
-    border-radius: 1rem;
+    border-radius: 2rem;
     font-size: 1rem;
     box-shadow: 
-        inset 0.1rem 0.1rem 0.3rem #a8b5cd,
+        inset 0.1rem 0.1rem 0.3rem #bac4d4,
         inset -0.1rem -0.1rem 0.3rem #ffffff;
     outline: none;
-    color: #2c3e4f;
-}
-
-.form-textarea {
-    min-height: 100px;
-    resize: vertical;
 }
 
 .auth-btn {
     width: 100%;
+    padding: 1rem;
     background: #4d5f84;
     color: white;
     border: none;
-    padding: 1rem;
     border-radius: 2rem;
     font-weight: 600;
     font-size: 1rem;
@@ -150,1858 +735,1144 @@ body {
         0.3rem 0.3rem 0.6rem #a8b5cd,
         -0.2rem -0.2rem 0.4rem #ffffff;
     transition: all 0.1s ease;
-    margin-top: 1rem;
 }
 
 .auth-btn:hover {
-    transform: translateY(-0.2rem);
+    transform: translateY(-2px);
+    box-shadow: 
+        0.4rem 0.4rem 0.8rem #a8b5cd,
+        -0.3rem -0.3rem 0.6rem #ffffff;
 }
 
 .auth-btn:active {
-    transform: translateY(0.1rem);
+    transform: translateY(0);
     box-shadow: 
         inset 0.2rem 0.2rem 0.4rem #a8b5cd,
         inset -0.2rem -0.2rem 0.4rem #ffffff;
-}
-
-.auth-error {
-    color: #e74c3c;
-    text-align: center;
-    margin-top: 1rem;
-    font-size: 0.9rem;
-}
-
-/* ===== КАБИНЕТ ===== */
-.cabinet {
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.header {
-    position: absolute;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    background: #15572400;
-    padding-right: 10px;
-    right: 0;
-}
-
-.header h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #2c3e4f;
-    text-shadow: 0.2rem 0.2rem 0.4rem #bac4d4;
-}
-
-.logout-btn {
-    position: absolute;
-    background: #eaf0fa;
-    border: none;
-    padding: 0.8rem 1.5rem;
-    border-radius: 2rem;
-    font-weight: 600;
-    color: #4d5f84;
-    cursor: pointer;
-    box-shadow: 
-        -0.3rem -0.3rem 0.6rem #ffffff,
-        0.4rem 0.4rem 0.8rem #a8b5cd;
-    transition: all 0.1s ease;
-}
-
-.logout-btn:hover {
-    transform: translateY(-0.2rem);
-}
-
-.logout-btn:active {
-    transform: translateY(0.1rem);
-    box-shadow: 
-        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
-        inset -0.2rem -0.2rem 0.4rem #ffffff;
-}
-
-/* ===== ПРОФИЛЬ МАСТЕРА ===== */
-.master-profile {
-    background: #eaf0fa;
-    border-radius: 2rem;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    box-shadow: 
-        -0.7rem -0.7rem 1.2rem #ffffff7a,
-        0.9rem 0.9rem 1.8rem #a8b5cd;
-    display: flex;
-    gap: 2rem;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.master-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: #a0c0e0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5rem;
-    color: white;
-    box-shadow: 
-        0.3rem 0.3rem 0.6rem #a8b5cd,
-        -0.2rem -0.2rem 0.4rem #ffffff;
-}
-
-.master-info {
-    flex: 1;
-}
-
-.master-name-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 0.5rem;
-}
-
-.master-name {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #2c3e4f;
-}
-
-.rating {
-    background: #d0dbe8;
-    padding: 0.3rem 0.8rem;
-    border-radius: 2rem;
-    font-weight: 600;
-    color: #2c3e4f;
-    font-size: 0.9rem;
-    box-shadow: 
-        inset 0.1rem 0.1rem 0.2rem #a8b5cd,
-        inset -0.1rem -0.1rem 0.2rem #ffffff;
-}
-
-.status {
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.specialization {
-    color: #4d5f84;
-}
-
-/* ===== ВКЛАДКИ ===== */
-.tabs {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    border: 2px dashed #4d5f8415;
-    /* background: #eaf0fa; */
-    padding: 0.5rem;
-    border-radius: 1.5rem;
-    /* box-shadow: 
-        inset 0.1rem 0.1rem 0.3rem #a8b5cd,
-        inset -0.1rem -0.1rem 0.3rem #ffffff; */
-    overflow-x: auto;
-}
-
-.tab {
-    flex: 1;
-    min-width: 100px;
-    padding: 1rem;
-    border: none;
-    background: transparent;
-    border-radius: 3rem;
-    font-weight: 600;
-    color: #4d5f84;
-    cursor: pointer;
-    transition: all 0.1s ease;
-    white-space: nowrap;
-}
-
-.tab.active {
-    background: #eaf0fa;
-    box-shadow: 
-        -0.2rem -0.2rem 0.4rem #ffffff,
-        0.2rem 0.2rem 0.4rem #a8b5cd;
-    color: #2c3e4f;
-}
-
-/* ===== КОНТЕНТ ===== */
-.content-panel {
-    background: transparent;  /* прозрачный - виден фон body */
-    padding: 0;               /* убираем отступы */
-    box-shadow: none;         /* убираем объем */
-    border-radius: 0;         /* убираем скругление */
-}
-
-.loading {
-    text-align: center;
-    color: #8a9bb8;
-    padding: 2rem;
-}
-
-.empty-state {
-    text-align: center;
-    color: #8a9bb8;
-    padding: 2rem;
-}
-
-/* ===== ПРАЙС ===== */
-.price-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.price-header h2 {
-    color: #2c3e4f;
-    font-size: 1.3rem;
-}
-
-.add-category-btn {
-    background: #eaf0fa;
-    border: none;
-    padding: 0.8rem 1.5rem;
-    border-radius: 2rem;
-    font-weight: 600;
-    color: #4d5f84;
-    cursor: pointer;
-    box-shadow: 
-        -0.2rem -0.2rem 0.4rem #ffffff,
-        0.2rem 0.2rem 0.4rem #a8b5cd;
-}
-
-.service-category {
-    margin-bottom: 2rem;
-}
-
-.category-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    /* border-bottom: 2px solid #d0dbe8; */
-}
-
-.category-title {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #2c3e4f;
-}
-
-.category-actions {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.action-btn {
-    background: #eaf0fa;
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    font-size: 1rem;
-    cursor: pointer;
-    box-shadow: 
-        -0.2rem -0.2rem 0.3rem #ffffff,
-        0.2rem 0.2rem 0.3rem #a8b5cd;
-    color: #4d5f84;
-}
-
-.service-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.8rem 0;
-    border-bottom: 1px dashed #d0dbe8;
-}
-
-.service-item:last-child {
-    border-bottom: none;
-}
-
-.service-name {
-    color: #4d5f84;
-}
-
-.service-price {
-    font-weight: 700;
-    color: #2c3e4f;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* ===== КАЛЕНДАРЬ ===== */
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.nav-btn {
-    background: #eaf0fa;
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 1.2rem;
-    cursor: pointer;
-    box-shadow: 
-        -0.2rem -0.2rem 0.4rem #ffffff,
-        0.2rem 0.2rem 0.4rem #a8b5cd;
-    color: #4d5f84;
-}
-
-.month-title {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #2c3e4f;
-}
-
-.weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    text-align: center;
-    font-weight: 600;
-    color: #4d5f84;
-    padding: 0.5rem 0;
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-}
-
-.calendar-day {
-    aspect-ratio: 1;
-    background: #eaf0fa;
-    border-radius: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 
-        -0.2rem -0.2rem 0.4rem #ffffff,
-        0.2rem 0.2rem 0.4rem #a8b5cd;
-    transition: all 0.1s ease;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #2c3e4f;
-}
-
-.calendar-day:hover {
-    transform: translateY(-0.2rem);
-}
-
-.calendar-day.active {
-    box-shadow: 
-        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
-        inset -0.2rem -0.2rem 0.4rem #ffffff;
-}
-
-.day-details {
-    background: #eaf0fa;
-    border-radius: 1.5rem;
-    padding: 1.5rem;
-    box-shadow: 
-        inset 0.1rem 0.1rem 0.3rem #a8b5cd,
-        inset -0.1rem -0.1rem 0.3rem #ffffff;
-}
-
-.selected-date {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #2c3e4f;
-    margin-bottom: 1rem;
-}
-
-.slots-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-}
-
-.slot-card {
-    background: #eaf0fa;
-    border-radius: 1rem;
-    padding: 1rem;
-    border: 2px dashed rgba(136, 150, 165, 0.27);
-    /* box-shadow: 
-        -0.2rem -0.2rem 0.4rem #ffffff,
-        0.2rem 0.2rem 0.4rem #a8b5cd; */
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
-.slot-time {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #2c3e4f;
-    min-width: 60px;
-}
-
-.slot-info {
-    flex: 1;
-    min-width: 150px;
-}
-
-.slot-title {
-    font-weight: 600;
-    color: #2c3e4f;
-    margin-bottom: 0.2rem;
-}
-
-.slot-subtitle {
-    font-size: 0.85rem;
-    color: #4d5f84;
-}
-
-.slot-status {
-    padding: 0.3rem 0.8rem;
-    border-radius: 1rem;
-    font-size: 0.8rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.status-busy {
-    background: #e74c3c20;
-    color: #c0392b;
-}
-
-.status-free {
-    background: #2ecc7120;
-    color: #27ae60;
-}
-
-.slot-actions {
-    display: flex;
-    gap: 0.3rem;
-}
-
-.slot-btn {
-    background: #eaf0fa;
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    font-size: 0.9rem;
-    cursor: pointer;
-    box-shadow: 
-        -0.1rem -0.1rem 0.2rem #ffffff,
-        0.1rem 0.1rem 0.2rem #a8b5cd;
-    color: #4d5f84;
-}
-
-/* ===== ЧАТЫ ===== */
-.chat-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-}
-
-.chat-item {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    padding: 10px;
-    margin-bottom: 3px;
-    border-radius: 1.5rem;
-    background: #eaf0fa;
-    box-shadow: 
-        -0.2rem -0.2rem 0.4rem #ffffff,
-        0.2rem 0.2rem 0.4rem #a8b5cd;
-    cursor: pointer;
-    transition: all 0.1s ease;
-}
-
-.chat-item:hover {
-    transform: translateY(-0.2rem);
-}
-
-.chat-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: #a0c0e0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: white;
-}
-
-.chat-info {
-    flex: 1;
-}
-
-.chat-name-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.2rem;
-}
-
-.chat-name {
-    font-weight: 700;
-    color: #2c3e4f;
-}
-
-.chat-time {
-    font-size: 0.8rem;
-    color: #8a9bb8;
-}
-
-.chat-preview {
-    font-size: 0.9rem;
-    color: #4d5f84;
-    display: flex;
-    justify-content: space-between;
-}
-
-.unread-badge {
-    background: #4d5f84;
-    color: white;
-    padding: 0.2rem 0.5rem;
-    border-radius: 1rem;
-    font-size: 0.7rem;
-    font-weight: 600;
-}
-
-/* ===== ПРОФИЛЬ (редактирование) ===== */
-.profile-form {
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.save-profile-btn {
-    width: 100%;
-    background: #4d5f84;
-    color: white;
-    border: none;
-    padding: 1rem;
-    border-radius: 2rem;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    box-shadow: 
-        0.3rem 0.3rem 0.6rem #a8b5cd,
-        -0.2rem -0.2rem 0.4rem #ffffff;
-    margin-top: 1rem;
-}
-
-/* ===== АДАПТИВ ===== */
-@media (max-width: 600px) {
-    .master-profile {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .master-name-row {
-        justify-content: center;
-    }
-    
-    .tabs {
-    margin: 1rem 1rem 2rem 1rem;  /* добавить отступы */
-        flex-wrap: wrap;
-    }
-    
-    .tab {
-        min-width: calc(50% - 0.5rem);
-    }
-    
-    .slot-card {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .slot-actions {
-        align-self: flex-end;
-    }
-
-}
-
-    /* ===== СТИЛИ ДЛЯ ПРАЙС-БИЛДЕРА (неоморфные инпуты) ===== */
-
-/* Поля ввода названия категории */
-.category-title input {
-    background: #eaf0fa;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 2rem;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #2c3e4f;
-    /* box-shadow: 
-        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
-        inset -0.2rem -0.2rem 0.4rem #ffffff; */
-    outline: none;
-    width: auto;
-    min-width: 200px;
-}
-
-/* Поле ввода названия услуги */
-.service-name input {
-    background: #eaf0fa;
-    border: none;
-    padding: 0.4rem 1rem;
-    border-radius: 2rem;
-    font-size: 1rem;
-    color: #4d5f84;
-    /* box-shadow: 
-        inset 0.1rem 0.1rem 0.2rem #a8b5cd,
-        inset -0.1rem -0.1rem 0.2rem #ffffff; */
-    outline: none;
-    width: 200px;
-}
-
-/* Поле ввода цены */
-.service-price input {
-    background: #eaf0fa;
-    border: none;
-    padding: 0.4rem 0.8rem;
-    border-radius: 2rem;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #2c3e4f;
-    text-align: right;
-    /* box-shadow: 
-        inset 0.1rem 0.1rem 0.2rem #a8b5cd,
-        inset -0.1rem -0.1rem 0.2rem #ffffff; */
-    outline: none;
-    width: 100px;
-}
-
-/* Убираем стрелки у number input */
-.service-price input[type=number]::-webkit-inner-spin-button,
-.service-price input[type=number]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-.service-price input[type=number] {
-    -moz-appearance: textfield;
-}
-
-/* Кнопки действий (редактировать/удалить) */
-.action-btn {
-    background: #eaf0fa;
-    border: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    font-size: 1rem;
-    cursor: pointer;
-    box-shadow: 
-        -0.2rem -0.2rem 0.4rem #ffffff,
-        0.2rem 0.2rem 0.4rem #a8b5cd;
-    color: #4d5f84;
-    transition: all 0.1s ease;
-}
-
-.action-btn:active {
-    box-shadow: 
-        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
-        inset -0.2rem -0.2rem 0.4rem #ffffff;
-}
-
-/* Кнопка добавления услуги */
-.add-service-btn {
-    background: #eaf0fa;
-    border: 1px dashed #4d5f84;
-    padding: 0.8rem 1.5rem;
-    border-radius: 3rem;
-    font-weight: 500;
-    color: #4d5f84;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 0.8rem;
-
-}
-.add-service-btn:hover {
-    border: 1px dashed #4d5f8400;
-    /* Мягкий объем как у клиентских плашек */
-    box-shadow: 
-        -0.4rem -0.4rem 0.8rem #ffffff34,
-        0.5rem 0.5rem 1.2rem #a8b5cd,
-        inset -0.1rem -0.1rem 0.3rem #c0cde0,
-        inset 0.2rem 0.2rem 0.4rem #ffffff;
-    
-    transition: all 0.1s ease;
-
-}
-
-
-.add-service-btn:active {
-    box-shadow: 
-        -0.2rem -0.2rem 0.4rem #ffffff,
-        0.3rem 0.3rem 0.8rem #a8b5cd,
-        inset 0.2rem 0.2rem 0.5rem #a8b5cd,
-        inset -0.2rem -0.2rem 0.4rem #ffffff;
-}
-
-
-.add-service-btn:active {
-    box-shadow: 
-        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
-        inset -0.2rem -0.2rem 0.4rem #ffffff;
-}
-
-/* Кнопка добавления категории */
-.add-category-btn {
-    background: #eaf0fa;
-    border: 2px dashed #a8b5cd;
-    padding: 1rem;
-    border-radius: 3rem;
-    font-weight: 600;
-    color: #4d5f84;
-    cursor: pointer;
-    box-shadow: 
-        -0.3rem -0.3rem 0.6rem #ffffff,
-        0.3rem 0.3rem 0.6rem #a8b5cd;
-    width: 100%;
-    margin-top: 1rem;
-    transition: all 0.1s ease;
-}
-
-.add-category-btn:active {
-    box-shadow: 
-        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
-        inset -0.2rem -0.2rem 0.4rem #ffffff;
-}
-
-/* Категория (карточка) */
-.service-category {
-    background: #eaf0fa;
-    border-radius: 2rem;
-    margin-bottom: 1.5rem;
-    padding: 1rem;
-    box-shadow: 
-        -0.5rem -0.5rem 1rem #ffffff,
-        0.5rem 0.5rem 1rem #a8b5cd;
-    overflow: hidden;
-}
-
-/* Заголовок категории */
-.category-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem;
-    cursor: pointer;
-    border-radius: 1rem;
-}
-
-/* Список услуг внутри категории */
-.services-list {
-    padding: 0.5rem;
-    border-radius: 1rem;
-    background: #eaf0fa;
-    /* box-shadow: 
-        inset 0.1rem 0.1rem 0.3rem #a8b5cd,
-        inset -0.1rem -0.1rem 0.3rem #ffffff; */
-    margin-top: 0.5rem;
 }
     </style>
 
-<style>
-    /* ===== СТИЛИ ДЛЯ ЧАТА МАСТЕРА (неоморфизм) ===== */
-/* Активный чат */
-.active-chat {
-    display: flex;
-    gap: 1.5rem;
-    margin-top: 1rem;
-}
-/* Колонка чата */
-.chat-column {
-    flex: 1;
-    background: transparent; /* фон родителя */
-    padding: 0; /* убираем внутренние отступы */
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
-
-.checkout-column {
-    flex: 1;
-    background: transparent; /* фон родителя */
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
-/* Заголовок чата */
-.chat-header {
+    <style>
+        .add-service-btn {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    /* margin-bottom: 1.5rem; */
-}
-
-.back-btn {
-    background: #eaf0fa;
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 1.2rem;
-    cursor: pointer;
-    box-shadow: 
-        -0.2rem -0.2rem 0.4rem #ffffff,
-        0.2rem 0.2rem 0.4rem #a8b5cd;
-    color: #4d5f84;
-    transition: all 0.1s ease;
-}
-
-.back-btn:active {
-    box-shadow: 
-        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
-        inset -0.2rem -0.2rem 0.4rem #ffffff;
-}
-
-.chat-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #2c3e4f;
-}
-
-/* Область сообщений */
-.chat-messages {
-    background: #f0f5fa; 
-    border-radius: 1.5rem;
-    padding: 1.5rem;
-    height: 350px;
-    overflow-y: auto;
-    margin-bottom: 1rem;
-    box-shadow: 
-        inset 0.2rem 0.2rem 0.5rem #a8b5cd,
-        inset -0.2rem -0.2rem 0.5rem #ffffff;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-/* Сообщения */
-.message {
-    max-width: 85%;
-    padding: 0.8rem 1.2rem;
-    border-radius: 1.5rem;
-    font-size: 0.95rem;
-    line-height: 1.4;
-    position: relative;
-}
-
-.message.master {
-    background: #8fb0d0;
-    color: white;
-    align-self: flex-end;
-    box-shadow: 
-        0.3rem 0.3rem 0.6rem #a8b5cd,
-        -0.1rem -0.1rem 0.2rem #ffffff;
-    border-bottom-right-radius: 0.3rem;
-}
-
-.message.client {
-    background: #ffffff;
-    color: #2c3e4f;
-    align-self: flex-start;
-    box-shadow: 
-        0.3rem 0.3rem 0.6rem #a8b5cd,
-        -0.1rem -0.1rem 0.2rem #ffffff;
-    border-bottom-left-radius: 0.3rem;
-}
-
-/* Инпут для сообщений */
-.chat-input-wrapper {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-}
-
-.chat-input {
-    flex: 1;
-    background: #eaeef5;
-    border: none;
-    border-radius: 3rem;
-    padding: 1rem 1.5rem;
-    font-size: 1rem;
-    box-shadow: 
-        inset 0.2rem 0.2rem 0.5rem #a8b5cd,
-        inset -0.2rem -0.2rem 0.5rem #ffffff;
-    outline: none;
-    color: #2c3e4f;
-}
-
-.chat-input::placeholder {
-    color: #8a9bb8;
-    opacity: 0.7;
-}
-
-.send-btn {
-    background: #eaf0fa;
-    border: none;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    font-size: 1.2rem;
-    cursor: pointer;
-    box-shadow: 
-        -0.2rem -0.2rem 0.4rem #ffffff,
-        0.2rem 0.2rem 0.4rem #a8b5cd;
-    color: #4d5f84;
-    transition: all 0.1s ease;
-}
-
-.send-btn:active {
-    box-shadow: 
-        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
-        inset -0.2rem -0.2rem 0.4rem #ffffff;
-}
-/* Колонка чек-билдера */
-.checkout-column {
-    flex: 1;
-}
-
-/* Заголовок чек-билдера */
-.checkout-column .chat-title {
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #2c3e4f;
-}
-
-/* Контейнер услуг (впадина) */
-.checkout-items {
-    background: #f0f5fa;  
-    border-radius: 1.5rem;
+    justify-content: center;
     padding: 1rem;
-    margin-bottom: 1.5rem;
-    height: auto;
-    /* max-height: 300px; */
-    overflow-y: auto;
-    box-shadow: 
-        inset 0.2rem 0.2rem 0.5rem #a8b5cd,
-        inset -0.2rem -0.2rem 0.5rem #ffffff;
-}
-
-/* Плашка услуги (выпуклая) */
-.checkout-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.2rem;
-    margin: 0.5rem 0;
-    background: #eaf0fa;
-    border-radius: 1.5rem;
-    box-shadow: 
-        -0.2rem -0.2rem 0.4rem #ffffff,
-        0.2rem 0.2rem 0.4rem #a8b5cd;
-    transition: all 0.1s ease;
-    cursor: pointer;
-}
-
-.checkout-item:active {
-    box-shadow: 
-        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
-        inset -0.2rem -0.2rem 0.4rem #ffffff;
-}
-
-/* Контейнер левой части (чекбокс + название) */
-.checkout-item-content {
-    display: flex;
-    align-items: center;
-    gap: 12px;  /* чуть больше воздуха */
-}
-
-/* Чекбокс */
-.checkout-checkbox {
-    width: 1.2rem;
-    height: 1.2rem;
-    accent-color: #8fb0d0;
-    cursor: pointer;
-}
-
-.checkout-checkbox:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-/* Название услуги */
-.checkout-item-name {
-    color: #4d5f84;
+    margin-top: 0.5rem;
+    border: 2px dashed #a8b5cd;
+    border-radius: 2rem;
+    color: #8a9bb8;
     font-weight: 500;
-}
-
-.checkout-item-name.approved {
-    font-weight: bold;
-}
-
-/* Контейнер правой части (цена + возможно статус) */
-.checkout-item-price-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-/* Цена */
-.checkout-item-price {
-    font-weight: 700;
-    color: #2c3e4f;
-}
-
-/* Строка итого */
-.total-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    background: #eaf0fa;
-    border-radius: 1.5rem;
-    margin: 1rem 0;
-    box-shadow: 
-        -0.2rem -0.2rem 0.4rem #ffffff,
-        0.2rem 0.2rem 0.4rem #a8b5cd;
-}
-
-/* Статус чека */
-.checkout-status {
-    margin-top: 1rem;
-    padding: 0.8rem;
-    border-radius: 1rem;
-    text-align: center;
-    font-weight: bold;
-}
-
-.checkout-status.approved {
-    background: #d4edda;
-    color: #155724;
-}
-
-.checkout-status.pending {
-    background: #fff3cd;
-    color: #856404;
-}
-
-#activeChatContainer.active-chat {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
-/* Строка итого */
-.total-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    background: #eaf0fa;
-    border-radius: 1.5rem;
-    margin-bottom: 1rem;
-    box-shadow: 
-        -0.2rem -0.2rem 0.4rem #ffffff,
-        0.2rem 0.2rem 0.4rem #a8b5cd;
-}
-
-.total-label {
-    font-weight: 600;
-    color: #4d5f84;
-    font-size: 1.1rem;
-}
-
-.total-value {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #2c3e4f;
-}
-/* Кнопки утверждения/отклонения */
-.checkout-column .order-btn {
-    width: 100%;
-    background: #8fb0d0;
-    color: white;
-    border: none;
-    border-radius: 3rem;
-    padding: 1rem;
-    font-weight: 700;
-    font-size: 1rem;
     cursor: pointer;
-    box-shadow: 
-        0.3rem 0.3rem 0.6rem #a8b5cd,
-        -0.2rem -0.2rem 0.4rem #ffffff;
-    transition: all 0.1s ease;
-}
-
-.checkout-column .order-btn:active {
-    transform: translateY(0.1rem);
-    box-shadow: 
-        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
-        inset -0.2rem -0.2rem 0.4rem #ffffff;
-}
-
-.checkout-column .order-btn:first-of-type {
-    background: #4d5f84;
-}
-
-.checkout-column .order-btn:last-of-type {
-    background: #e74c3c;
-}
-/* Контейнер с двумя кнопками */
-.checkout-column div[style*="display: flex"] {
-    gap: 0.5rem;
-}
-/* Статус чека */
-.checkout-column .empty-state {
-    text-align: center;
-    color: #8a9bb8;
-    padding: 2rem;
-}
-/* Скроллбар для чата */
-.chat-messages::-webkit-scrollbar {
-    width: 6px;
-}
-
-.chat-messages::-webkit-scrollbar-track {
+    transition: all 0.2s ease;
     background: transparent;
 }
 
-.chat-messages::-webkit-scrollbar-thumb {
-    background: rgba(74, 111, 140, 0.3);
-    border-radius: 3px;
-    box-shadow: 
-        inset 0.1rem 0.1rem 0.2rem rgba(255,255,255,0.5),
-        inset -0.1rem -0.1rem 0.2rem rgba(0,0,0,0.1);
-}
-
-/* Адаптивность */
-@media (max-width: 768px) {
-    .active-chat {
-        flex-direction: column;
-    }
-    
-    .chat-column, .checkout-column {
-        width: 100%;
-    }
-    
-    .message {
-        max-width: 95%;
-    }
-}
-</style>
-
-<style>
-    .checkout-datetime {
-    margin: 1rem 0;
-    padding: 0.8rem;
+.add-service-btn:hover {
     background: #eaf0fa;
-    border-radius: 1rem;
-    text-align: center;
-    color: #2c3e4f;
-    font-weight: 500;
-    box-shadow: 
-        inset 0.1rem 0.1rem 0.3rem #a8b5cd,
-        inset -0.1rem -0.1rem 0.3rem #ffffff;
+    color: #4d5f84;
+    border-color: #4d5f84;
 }
-</style>
+
+.form-action-btn {
+    background: #eaf0fa;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 2rem;  /* овальные, а не круглые */
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 
+        -0.2rem -0.2rem 0.4rem #ffffff,
+        0.2rem 0.2rem 0.4rem #a8b5cd;
+    color: #4d5f84;
+    min-width: 60px;
+    transition: all 0.1s ease;
+}
+
+.form-action-btn:active {
+    box-shadow: 
+        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
+        inset -0.2rem -0.2rem 0.4rem #ffffff;
+}
+
+    </style>
+
+    <style>
+        /* ===== ЛЭНДИНГ ===== */
+.landing {
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    
+
+}
+
+/* Фоновые пятна по углам */
+.bg-blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.5;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.bg-blob.top-left {
+    top: -100px;
+    left: -100px;
+    width: 500px;
+    height: 500px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    opacity: 0.01;
+}
+
+.bg-blob.top-right {
+    top: -130px;
+    right: -130px;
+    width: 400px;
+    height: 400px;
+    background: linear-gradient(135deg, #42baff 0%, #00ff5e 100%);
+    /* background: linear-gradient(135deg, #ec5e00 0%, #ff9d3c 100%); */
+
+}
+
+.bg-blob.bottom-left {
+    bottom: -100px;
+    left: -100px;
+    width: 600px;
+    height: 600px;
+    background: linear-gradient(135deg, #42baff 0%, #006eff 100%);
+}
+
+.bg-blob.bottom-right {
+    bottom: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    opacity: 0.01;
+}
+
+.board {
+    background: linear-gradient(45deg, white, rgb(213, 235, 248));
+    /* background-color: rgb(245, 254, 255); */
+    /* background: #e2e8f0; */
+    max-width: 1000px;
+    border-radius: 2rem;
+    padding: 5rem 10rem; /* 200px по бокам */
+    margin: 0px auto;
+    top: -30px;
+    box-shadow: 
+        2rem 2rem 3rem #62a3c67a,
+        -1rem -2rem 2rem #e4f8ff00;
+    /* box-shadow: 
+        0.9rem 0.9rem 1.8rem #bac4d4,
+        -0.9rem -0.9rem 1.8rem #f0f6ff; */
+    position: relative;
+    outline: 1px solid rgba(140, 165, 186, 0.589);
+}
+
+
+.slogan {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    color: #000e18;
+    margin: 0rem;
+    line-height: 1.6;
+}
+
+.slogan-highlight {
+    position: absolute;
+    display: block;
+    font-weight: 600;
+    max-width: 400px;
+    font-size: 30px;
+    color: #2c3e4f;
+    margin-top: 0rem;
+    transform: translateX(220px);
+    padding: 20px;
+    right: 0;
+    bottom: -40px;
+    border-radius: 10px;
+    background: linear-gradient(20deg, rgb(88, 254, 212), rgb(85, 198, 255));
+}
+.sec-slogan
+{
+    position: relative;
+    font-size: 28px;
+    font-weight: bold;
+    color: #000000;
+    text-align: center;
+
+}
+
+.plates {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.plate {
+    width: 160px; /* уменьшил с 200px */
+    height: 160px;
+    background: #f1f5f9;
+    border-radius: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 
+        -0.7rem -0.7rem 1.2rem #ffffff49,
+        0.9rem 0.9rem 1.8rem #a8d0ec,
+        0.5rem 0.5rem 1rem #73c0f8,
+        inset -0.2rem -0.2rem 0.5rem #afbccc,
+        inset 0.3rem 0.3rem 0.6rem #ffffff;
+    /* box-shadow: 
+        -0.7rem -0.7rem 1.2rem #ffffff49,
+        0.9rem 0.9rem 1.8rem #b8c4d4,
+        inset -0.2rem -0.2rem 0.5rem #c0cde0,
+        inset 0.3rem 0.3rem 0.6rem #ffffff; */
+    transition: all 0.1s ease;
+    border: none;
+    outline: 1px solid rgba(95, 119, 142, 0.586);
+    overflow: hidden;
+}
+
+.plate-icon {
+    font-size: 3rem; /* уменьшил с 4rem */
+    line-height: 1;
+    margin-bottom: 0.6rem;
+    color: #4a6f8c;
+    filter: drop-shadow(0.2rem 0.2rem 0.3rem #b8c4d4);
+}
+
+.plate-text {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #4a6f8c;
+}
+
+/* Информационные блоки */
+.features {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 2px solid #d6e0ec;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    background: #e8edf3;
+    border-radius: 2rem;
+    box-shadow: 
+        inset 0.1rem 0.1rem 0.3rem #ffffff,
+        inset -0.1rem -0.1rem 0.3rem #b8c4d4;
+}
+
+.feature-icon {
+    width: 24px;
+    height: 24px;
+    background: #2ecc71;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.feature-text {
+    color: #2c3e4f;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* Адаптив */
+@media (max-width: 1200px) {
+    .board {
+        padding: 2rem 6rem; /* уменьшил боковые отступы */
+    }
+}
+
+@media (max-width: 768px) {
+    .board {
+        padding: 1.5rem 1rem; /* на мобильных минимальные отступы */
+        margin: 10px;
+    }
+
+    .master-title {
+        font-size: 1.8rem;
+        letter-spacing: 0.1rem;
+    }
+
+    .slogan {
+        font-size: 1rem;
+    }
+    .sec-slogan
+    {
+        font-size: 15px;
+    }
+
+    .plates {
+        gap: 1rem;
+    }
+
+    .plate {
+        width: 120px;
+        height: 120px;
+        overflow: hidden;
+    }
+
+    .plate-icon {
+        font-size: 2.5rem;
+    }
+
+    .features {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .bg-blob {
+        filter: blur(60px);
+        opacity: 0.4;
+        width: 200px;
+        height: 200px;
+    }
+    .bg-blob.bottom-left {
+
+    width: 250px;
+    height: 250px;
+
+}
+
+
+}
+    </style>
+
+    <style>
+        .sprite-icon {
+    width: 100%;  /* подбери под размер иконки в спрайте */
+    height: 100%;
+    background-image: url('/items.png');
+    background-size: 300%; /* 3 иконки в ряд = 300% */
+    background-repeat: no-repeat;
+    /* margin-bottom: 0.5rem; */
+    overflow: hidden;
+    /* filter: drop-shadow(0.1rem 0.1rem 0.2rem rgba(106, 130, 251, 0.3)); */
+}
+
+/* Позиционирование каждой иконки (3x3 сетка) */
+/* Row 1 */
+.sprite-water { background-position: 2% 3%; }      /* 1-я иконка (верх-лево) */
+.sprite-ac { background-position: 50% 2%; }        /* 2-я иконка (верх-центр) */
+.sprite-washer { background-position: 98% 3%; }   /* 3-я иконка (верх-право) */
+
+/* Row 2 */
+.sprite-fridge { background-position: 50% 93%; }    /* 4-я иконка (центр-лево) */
+.sprite-hob { background-position: 2% 48%; }      /* 5-я иконка (центр) */
+.sprite-orders { background-position: 100% 50%; }  /* 6-я иконка (центр-право) */
+    </style>
+
 
 </head>
 
 <body>
-    <!-- Экран входа по ключу -->
-    <div class="auth-screen" id="authScreen">
-        <div class="auth-card">
-            <h2 style="margin-bottom: 1.5rem;">Вход</h2>
-            
-            <div class="form-group">
-                <label class="form-label">Ваш мастер-ключ</label>
-                <input type="text" class="form-input" id="masterKey" placeholder="Например: cool-master-123">
-            </div>
-            
-            <button class="auth-btn" id="loginBtn">Войти</button>
-            
-            <div style="text-align: center; margin: 1rem 0; color: #999;">или</div>
-            
-            <button class="auth-btn" id="generateBtn" style="background: #6c757d;">Сгенерировать новый ключ</button>
-            
-            <div id="authError" style="color: red; margin-top: 1rem; text-align: center;"></div>
-        </div>
-    </div>
+    <!-- Canvas для абстрактных пятен -->
 
-    <!-- Кабинет мастера (скрыт) -->
-    <div class="cabinet" id="cabinet" style="display: none;">
-        <div class="header">
-            <!-- <h1>🔧 КАБИНЕТ МАСТЕРА</h1> -->
-            <button class="auth-btn" id="logoutBtn" style="width: auto; padding: 0.5rem 1.5rem;">Выйти</button>
-        </div>
 
-        <!-- Профиль мастера -->
-        <div class="master-profile">
-            <div style="width: 60px; height: 60px; background: #a6c2de; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">👤</div>
-            <div>
-                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.3rem;">
-                    <span class="master-name" id="masterName" style="font-size: 1.5rem; font-weight: bold;">Загрузка...</span>
-                    <!-- <span class="rating" id="masterRating">★ 0.0</span> -->
-                    <span class="status" id="masterStatus">🔴 Офлайн</span>
-                </div>
-                <div class="specialization" id="masterSpec"></div>
-                <div class="master-key" id="masterKeyDisplay" style="font-size: 0.8rem; color: #999; margin-top: 0.3rem;"></div>
-
-                <!-- Чекбоксы специализации -->
-<div style="margin-top: 1rem; padding-top: 0.5rem; border-top: 1px dashed #d0dbe8;">
-    <div style="font-size: 0.9rem; color: #4d5f84; margin-bottom: 0.5rem;">Выберите услуги:</div>
-    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-        <label style="display: flex; align-items: center; gap: 0.3rem; background: #eaf0fa; padding: 0.3rem 0.8rem; border-radius: 2rem;">
-            <input type="checkbox" value="counters" class="service-checkbox"> 💧 Счётчики
-        </label>
-        <label style="display: flex; align-items: center; gap: 0.3rem; background: #eaf0fa; padding: 0.3rem 0.8rem; border-radius: 2rem;">
-            <input type="checkbox" value="conditioners" class="service-checkbox"> ❄️ Кондиционеры
-        </label>
-        <label style="display: flex; align-items: center; gap: 0.3rem; background: #eaf0fa; padding: 0.3rem 0.8rem; border-radius: 2rem;">
-            <input type="checkbox" value="hobs" class="service-checkbox"> 🔥 Варочные
-        </label>
-        <label style="display: flex; align-items: center; gap: 0.3rem; background: #eaf0fa; padding: 0.3rem 0.8rem; border-radius: 2rem;">
-            <input type="checkbox" value="washing" class="service-checkbox"> 🚰 Стиральные
-        </label>
-        <label style="display: flex; align-items: center; gap: 0.3rem; background: #eaf0fa; padding: 0.3rem 0.8rem; border-radius: 2rem;">
-            <input type="checkbox" value="fridges" class="service-checkbox"> ❄️ Холодильники
-        </label>
-        <label style="display: flex; align-items: center; gap: 0.3rem; background: #eaf0fa; padding: 0.3rem 0.8rem; border-radius: 2rem;">
-            <input type="checkbox" value="other" class="service-checkbox"> 🔧 Прочее
-        </label>
-    </div>
-</div>
-
-            </div>
-        </div>
-
-        <!-- Вкладки -->
-        <div class="tabs">
-            <button class="tab active" data-tab="price">💰 ПРАЙС</button>
-            <button class="tab" data-tab="calendar">📅 ГРАФИК</button>
-            <button class="tab" data-tab="chats">💬 ЧАТЫ</button>
-            <button class="tab" data-tab="profile">👤 ПРОФИЛЬ</button>
+    <div class="main-layout">
+        <!-- Левый сайдбар -->
+        <div class="sidebar">
+            <button class="sidebar-item active" onclick="switchPage('landing')">🏠</button>
+            <button class="sidebar-item" onclick="switchPage('chat')">👤</button>
+            <button class="sidebar-item" onclick="switchPage('order')">📋</button>
+            <button class="sidebar-item" onclick="switchPage('about')">ℹ️</button>
         </div>
 
         <!-- Контент -->
-        <div class="content-panel" id="contentPanel">
-            <!-- ПРАЙС -->
-            <div class="price-tab">
-                <div class="price-header">
-                    <h2>Мои услуги</h2>
+        <div class="content">
+            <!-- Стартовый лэндинг -->
+            <div id="landingPage" class="page active">
+                <div class="landing">
+
+                    <div class="bg-blob top-left"></div>
+                    <div class="bg-blob top-right"></div>
+                    <div class="bg-blob bottom-left"></div>
+                    <div class="bg-blob bottom-right"></div>
+
+                    <!-- <div class="master-title">ЧАСТНЫЙ МАСТЕР</div> -->
+                    <div class="board">
+
+                        <div class="master-title">
+                            <c>Ч</c>АСТНЫЙ МАСТЕР</div>
+                            <div class="slogan">
+                                Работаем только с теми, кто дорожит репутацией
+                            </div>
+                            <div class="plates">
+                                <div class="plate" onclick="switchToChat('counters')">
+                                    <div class="plate-icon sprite-icon sprite-water"></div>
+                                    <!-- <span class="plate-text">Счётчик воды</span> -->
+                                </div>
+                                <div class="plate" onclick="switchToChat('conditioners')">
+                                    <div class="plate-icon sprite-icon sprite-ac"></div>
+                                    <!-- <span class="plate-text">Кондиционер</span> -->
+                                </div>
+                                <div class="plate" onclick="switchToChat('washing')">
+                                    <div class="plate-icon sprite-icon sprite-washer"></div>
+                                </div>
+                                <div class="plate" onclick="switchToChat('fridges')">
+                                    <div class="plate-icon sprite-icon sprite-fridge"></div>
+                                    <!-- <span class="plate-text">Холодильники</span> -->
+                                </div>
+                                <div class="plate" onclick="switchToChat('hobs')">
+                                    <div class="plate-icon sprite-icon sprite-hob"></div>
+                                </div>
+                                <!-- <div class="plate" onclick="showOrderRestore()">
+                                    <div class="plate-icon sprite-icon sprite-orders"></div>
+                                </div> -->
+                            </div>
+
+                        <!-- <div class="plates">
+                            <div class="plate" onclick="switchToChat('counters')">
+                                <span class="plate-icon">💧</span>
+                                <span class="plate-text">Счётчик воды</span>
+                            </div>
+                            <div class="plate" onclick="switchToChat('conditioners')">
+                                <span class="plate-icon">❄️</span>
+                                <span class="plate-text">Кондиционер</span>
+                            </div>
+                            <div class="plate" onclick="switchToChat('washing')">
+                                <span class="plate-icon">🌀</span>
+                                <span class="plate-text">Стиральные машинки</span>
+                            </div>
+                            <div class="plate" onclick="switchToChat('fridges')">
+                                <span class="plate-icon">❄️</span>
+                                <span class="plate-text"> Холодильники<</span>
+                            </div>
+                            <div class="plate" onclick="switchToChat('hobs')">
+                                <span class="plate-icon">🔥</span>
+                                <span class="plate-text">Варочные</span>
+                            </div>
+                            <div class="plate" onclick="showOrderRestore()">
+                                <span class="plate-icon">📋</span>
+                                <span class="plate-text">Мои заказы</span>
+                            </div>
+                        </div> -->
+                        <div class="sec-slogan">
+                            Единая команда проверенных специалистов
+                        </div>
+                        <div class="sec-slogan">
+                            Без регистрации и посредников
+                        </div>
+
+                        <!-- <span class="slogan-highlight">сантехники, электрики, сварщики</span> -->
+
+                        <!-- <div class="features">
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span class="feature-text">Фиксированные цены</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span class="feature-text">Без скрытых наценок</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span class="feature-text">Гарантия на работы</span>
+                            </div>
+                        </div> -->
+
+                    </div>
                 </div>
-                <div id="servicesList" class="services-list-container">
-                    <div class="loading">Загрузка услуг...</div>
-                </div>
-                <button class="add-category-btn" id="addCategoryBtn">+ Добавить категорию</button>
             </div>
 
-            <!-- КАЛЕНДАРЬ -->
-            <div class="calendar-tab" style="display: none;">
-                <div class="calendar-header">
-                    <button class="nav-btn" id="prevMonthBtn">←</button>
-                    <div class="month-title" id="monthTitle">Март 2025</div>
-                    <button class="nav-btn" id="nextMonthBtn">→</button>
-                </div>
-                <div class="weekdays">
-                    <span>ПН</span><span>ВТ</span><span>СР</span><span>ЧТ</span>
-                    <span>ПТ</span><span>СБ</span><span>ВС</span>
-                </div>
-                <div class="calendar-grid" id="calendarGrid"></div>
-                <div class="day-details" id="dayDetails"></div>
-            </div>
+            <div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 998;"></div>
+            <!-- Мини-форма для имени -->
+            <div id="nameForm" style="display: none; margin-top: 2rem;">
+                <div class="board" style="padding: 2rem; max-width: 400px; margin: 0 auto;">
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <span style="font-size: 1.2rem; font-weight: 600; color: #2c3e4f;">
+                            Заказ №<span id="orderNumberDisplayNew"></span>
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <label style class="form-label">Как к вам обращаться?</label>
+                        <input type="text" class="fancy-input" id="clientNameInput" placeholder="Например: Александр">
+                    </div>
 
-            <!-- ЧАТЫ -->
-            <div class="chats-tab" style="display: none;">
-                <div class="chat-list" id="chatList">
-                    <div class="loading">Загрузка чатов...</div>
+                    <button class="auth-btn" id="startChatBtn" style="margin-top: 1rem;">Начать чат</button>
                 </div>
             </div>
 
-            <!-- ПРОФИЛЬ -->
-            <div class="profile-tab" style="display: none;">
-                <div style="max-width: 500px; margin: 0 auto;">
-                    <div class="form-group">
-                        <label>Имя</label>
-                        <input type="text" class="form-input" id="profileName">
+            <div id="restoreForm" style="display: none; margin-top: 2rem;">
+                <div class="board" style="padding: 2.5rem 2rem; max-width: 400px; margin: 0 auto; position: relative;">
+                    
+                    <!-- Крестик закрытия -->
+                    <button onclick="closeModal()" style="position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #8a9bb8; padding: 0;">✕</button>
+                    
+                    <!-- Заголовок с иконкой -->
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔐</div>
+                        <h3 style="color: #2c3e4f; margin: 0; font-size: 1.5rem;">Восстановление чата</h3>
+                        <p style="color: #8a9bb8; margin-top: 0.3rem; font-size: 0.9rem;">Введите номер вашего заказа</p>
                     </div>
-                    <div class="form-group">
-                        <label>Специализация (через запятую)</label>
-                        <input type="text" class="form-input" id="profileSpec">
+                    
+                    <!-- Поле ввода -->
+                    <div class="form-group" style="margin-bottom: 2rem;">
+                        <label class="form-label" style="display: block; margin-bottom: 0.5rem; color: #4d5f84; font-weight: 500;">Номер заказа</label>
+                        <input type="text" class="fancy-input" id="restoreOrderInput" placeholder="6 цифр" maxlength="6" 
+                               style="width: 100%; padding: 1rem 1.2rem; background: #f5f9ff; border: none; border-radius: 2rem; font-size: 1.2rem; text-align: center; letter-spacing: 2px; box-shadow: inset 0.1rem 0.1rem 0.3rem #bac4d4, inset -0.1rem -0.1rem 0.3rem #ffffff; outline: none;">
                     </div>
-                    <div class="form-group">
-                        <label>О себе</label>
-                        <textarea class="form-input" id="profileAbout" rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Телефон</label>
-                        <input type="text" class="form-input" id="profilePhone">
-                    </div>
-                    <div class="form-group">
-                        <label>Город</label>
-                        <input type="text" class="form-input" id="profileCity">
-                    </div>
-                    <div class="form-group">
-                        <label>Районы выезда</label>
-                        <input type="text" class="form-input" id="profileArea">
-                    </div>
-                    <button class="auth-btn" id="saveProfileBtn">Сохранить изменения</button>
+                    
+                    <!-- Кнопка -->
+                    <button class="auth-btn" id="restoreChatBtn" style="width: 100%; padding: 1rem; background: #4d5f84; color: white; border: none; border-radius: 2rem; font-weight: 600; font-size: 1.1rem; cursor: pointer; box-shadow: 0.3rem 0.3rem 0.6rem #a8b5cd, -0.2rem -0.2rem 0.4rem #ffffff; transition: all 0.1s ease; margin-bottom: 0.5rem;">
+                        🔍 Загрузить чат
+                    </button>
+                    
+                    <!-- Подсказка -->
+                    <p style="text-align: center; color: #8a9bb8; font-size: 0.8rem; margin-top: 1rem;">
+                        Номер можно найти в истории заказов или в сообщении от мастера
+                    </p>
                 </div>
             </div>
+
+            <!-- Страница общения с мастером -->
+            <div id="chatPage" class="page">
+                <!-- Заглушка для чата -->
+                <div id="chatPlaceholder" class="chat-page" style="display: none;">
+                    <div class="master-card" style="text-align: center; padding: 3rem;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">💬</div>
+                        <h3 style="color: #2c3e4f; margin-bottom: 1rem;">Нет активного чата</h3>
+                        <p style="color: #4a6f8c; margin-bottom: 2rem;">Выберите услугу на главной, чтобы начать общение с мастером</p>
+                        <button class="auth-btn" onclick="switchPage('landing')" style="max-width: 200px; margin: 0 auto;">К услугам</button>
+                    </div>
+                </div>
+                
+                <!-- Реальный чат -->
+                <div id="chatContent" class="chat-page">
+                    <div class="master-card">
+                        <div class="master-header">
+                            <div class="master-avatar">👤</div>
+                            <div class="master-info">
+                                <div class="master-name-row">
+                                    <span class="master-name">Штатный Мастер</span>
+                                    <span class="status">💚 Свободен</span>
+                                </div>
+                                <div class="specialization">
+                                    <!-- <span class="spec-tag">🔧 Сантехника</span> -->
+                                    <span class="spec-tag">🔩 Счетчики</span>
+                                    <span class="spec-tag">❄️ Кондиционеры</span>
+                                </div>
+                                <div id="debugMasterInfo" style="font-size: 12px; color: #4a6f8c; margin-top: 5px; padding: 3px 8px; background: #eaf0fa; border-radius: 1rem;">
+                                    Загрузка мастера...
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- <button class="expand-btn" onclick="toggleMasterDetails()">
+                            <span>▼ Все услуги и портфолио</span>
+                        </button> -->
+
+                        <div class="master-details" id="masterDetails" style="display: none;">
+                            <div class="section-title">О себе</div>
+                            <div class="about-text">
+                                Предоставляю профессиональные услуги по обслуживанию и ремонту кондиционеров, 
+                                а так же ремонту бытовой техники на высоком уровне качества и надежности.
+                            </div>
+                            
+                            <div class="section-title">Услуги и цены</div>
+                            <div class="services-list" style="max-height: 200px; overflow-y: auto;">
+                                <!-- JS заполнит -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="two-columns">
+                        <div class="chat-column">
+                            <div class="chat-title">💬 Чат с мастером</div>
+                            <div class="chat-messages" id="chatMessages"></div>
+                            <!-- <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                <input type="text" class="chat-input" placeholder="ID клиента (client_...)" id="clientIdInput" style="flex: 1;">
+                                <button class="send-btn" onclick="loadClientChat()" style="background: #4a6f8c;">↻</button>
+                            </div> -->
+                            <div class="chat-input-wrapper">
+                                <input type="text" class="chat-input" placeholder="Введите сообщение..." id="chatInput">
+                                <button class="send-btn" onclick="sendMessage()">→</button>
+                            </div>
+                            <!-- <div class="chat-input-wrapper">
+                                <input type="text" class="chat-input" placeholder="Введите сообщение..." id="chatInput">
+                                <button class="send-btn" onclick="sendMessage()">→</button>
+                            </div> -->
+                        </div>
+
+                        <div class="checkout-column">
+                            <div class="chat-title">🔧 Чек-билдер</div>
+                            <div class="checkout-items" id="checkoutItems">
+                                <!-- JS заполнит -->
+                            </div>
+                            
+                            <div class="total-row">
+                                <span class="total-label">ИТОГО:</span>
+                                <span class="total-value" id="totalValue">0 ₽</span>
+                            </div>
+
+                                <!-- НОВЫЙ БЛОК: дата и время -->
+                            <div class="datetime-selector" style="margin: 1rem 0; padding: 1rem; background: #f1f5f9; border-radius: 1.5rem;">
+                                <div style="margin-bottom: 0.5rem; color: #4a6f8c; font-weight: 500;">📅 Выберите дату и время</div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <input type="date" id="orderDate" class="chat-input" style="flex: 1;" min="${new Date().toISOString().split('T')[0]}">
+                                    <input type="time" id="orderTime" class="chat-input" style="flex: 1;" value="12:00">
+                                </div>
+                            </div>
+                            
+                            <button class="order-btn" onclick="confirmOrder()">✅ Договорились</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Страница заказа -->
+            <div id="orderPage" class="page">
+                
+            <!-- Заглушка (показывается, если нет заказа) -->
+            <div id="orderPlaceholder" class="order-page" style="display: none;">
+                <div class="order-card" style="text-align: center; padding: 3rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+                    <h3 style="color: #2c3e4f; margin-bottom: 1rem;">Нет активного заказа</h3>
+                    <p style="color: #4a6f8c; margin-bottom: 2rem;">Перейдите на стартовую страницу и выберите услугу</p>
+                    <button class="auth-btn" onclick="switchPage('landing')" style="max-width: 200px; margin: 0 auto;">На главную</button>
+                </div>
+            </div>
+
+            <div id="orderContent" class="order-page">
+                            <div class="order-card">
+                                <div class="order-header">
+                                    <h2>Заказ №<span id="orderNumberDisplay"></span></h2>
+                                    <span class="order-status" id="orderStatusDisplay">В работе</span>
+                                </div>
+                                
+                                <div class="master-header" style="margin-bottom: 2rem;">
+                                    <div class="master-avatar">👤</div>
+                                    <div>
+                                        <div class="master-name" id="masterNameDisplay"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Дата и время -->
+                                <div style="text-align: center; margin-bottom: 1.5rem; padding: 0.8rem; background: #eaf0fa; border-radius: 1rem;">
+                                    <span id="orderDateTimeDisplay">12:00</span>
+                                </div>
+
+                                <div class="order-items" id="orderItems"></div>
+
+                                
+                                <div class="total-row">
+                                    <span class="total-label">Итого</span>
+                                    <span class="total-value" id="orderTotal">0 ₽</span>
+                                </div>
+
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progressFill" style="width: 60%;"></div>
+                                </div>
+                                <div style="text-align: center; color: #4a6f8c;" id="orderStatusText">Ожидайте Мастера</div>
+                            </div>
+            </div>
+
+            </div>
+
+            <!-- Инфо страница -->
+            <div id="aboutPage" class="page">
+                <div class="about-card" style="padding: 2rem;">
+                    <h2 style="margin-bottom: 1.5rem; color: #2c3e4f;">О сервисе</h2>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: #4a6f8c; margin-bottom: 0.5rem;">👥 Кооператив проверенных мастеров</h3>
+                        <p style="color: #2c3e4f; line-height: 1.6;">
+                            Каждый специалист проходит отбор и имеет реальные отзывы. 
+                            Работаем только с теми, кто дорожит репутацией.
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: #4a6f8c; margin-bottom: 0.5rem;">💰 Прозрачные цены</h3>
+                        <p style="color: #2c3e4f; line-height: 1.6;">
+                            Мастер называет стоимость до выезда. Никаких скрытых платежей 
+                            и навязанных услуг. Вы платите ровно то, о чем договорились.
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="color: #4a6f8c; margin-bottom: 0.5rem;">✔️ Гарантия</h3>
+                        <p style="color: #2c3e4f; line-height: 1.6;">
+                            На все работы даем гарантию. Если что-то пошло не так — 
+                            мастер вернется и исправит за свой счет.
+                        </p>
+                    </div>
+                    
+                    <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #d6e0ec;">
+                        <p style="color: #4a6f8c; font-style: italic;">
+                            «Частный мастер» — это не агрегатор, а сообщество профессионалов, 
+                            где каждый отвечает за результат лично.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
         </div>
-
-        <!-- ТЕСТОВЫЙ БЛОК ДЛЯ ПРОВЕРКИ ONVALUE -->
-        <!-- <div style="background: #ffeb3b; padding: 1rem; margin-bottom: 2rem; border-radius: 1rem;">
-            <h3>🔬 ТЕСТ REALTIME (client_3ujoq6zq6)</h3>
-            <div id="testMessages" style="background: white; padding: 0.5rem; min-height: 100px; max-height: 150px; overflow-y: auto; font-size: 12px;">
-                Загрузка...
-            </div>
-        </div> -->
-
     </div>
 
     <script type="module">
         // ===== Firebase =====
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, deleteDoc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getDatabase, ref, query as rtdbQuery, orderByChild, equalTo, onValue, off, push, set, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-    
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getDatabase, ref, push, set, onValue, query as rtdbQuery, orderByChild, equalTo, get, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        // import { getDatabase, ref, push, set, onValue, query, orderByChild, equalTo, get, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        
         // Конфиг Firebase
+
         const firebaseConfig = {
-    apiKey: "AIzaSyCVr3ZztynpNzkeFY3aLKFN777oPXXXXXX",
-    authDomain: "inspector-24f9b.firebaseapp.com",
-    projectId: "inspector-24f9b",
+    apiKey: "AIzaSyCVr3ZztynpNzkeFY3aLKFN777oPXXXXXX", // API ключ остается тем же
+    authDomain: "inspector-24f9b.firebaseapp.com", // authDomain тот же
+    databaseURL: "https://creator-75dac-default-rtdb.europe-west1.firebasedatabase.app", // 👈 МЕНЯЕМ ТОЛЬКО ЭТО
+    projectId: "inspector-24f9b", // projectId тот же   
     storageBucket: "inspector-24f9b.firebasestorage.app",
     messagingSenderId: "590955045913",
     appId: "1:590955045913:web:164311eb98caeca7643688"
 };
 
-// И главное — databaseURL
-    
-        console.log("🟢 Инициализация Firebase...");
+        // const firebaseConfig = {
+        //     apiKey: "AIzaSyCVr3ZztynpNzkeFY3aLKFN777oPXXXXXX",
+        //     authDomain: "inspector-24f9b.firebaseapp.com",
+        //     databaseURL: "https://inspector-24f9b-default-rtdb.europe-west1.firebasedatabase.app",
+        //     projectId: "inspector-24f9b",
+        //     storageBucket: "inspector-24f9b.firebasestorage.app",
+        //     messagingSenderId: "590955045913",
+        //     appId: "1:590955045913:web:164311eb98caeca7643688"
+        // };
+        
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const rtdb = getDatabase(app, "https://creator-75dac-default-rtdb.europe-west1.firebasedatabase.app/");
-        // const rtdb = getDatabase(app);
-        window.rtdb = rtdb; 
-        console.log("✅ Firebase готов");
-    
-        // ===== Элементы DOM =====
-        const authScreen = document.getElementById('authScreen');
-        const cabinet = document.getElementById('cabinet');
-        const masterKeyInput = document.getElementById('masterKey');
-        const loginBtn = document.getElementById('loginBtn');
-        const generateBtn = document.getElementById('generateBtn');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const authError = document.getElementById('authError');
-        const masterKeyDisplay = document.getElementById('masterKeyDisplay');
+        const rtdb = getDatabase(app);
+        const db = getFirestore(app);  // ← ЭТОЙ СТРОКИ НЕТ
+        // Глобальные переменные
+        window.rtdb = rtdb;
+        window.clientId = null;
+        // window.clientId = 'client_' + Math.random().toString(36).substr(2, 9);
+        window.masterId = 'green-lizard-666';
+        window.chatId = null;
         
-        // Элементы календаря
-        const monthTitle = document.getElementById('monthTitle');
-        const calendarGrid = document.getElementById('calendarGrid');
-        const prevMonthBtn = document.getElementById('prevMonthBtn');
-        const nextMonthBtn = document.getElementById('nextMonthBtn');
-        const dayDetails = document.getElementById('dayDetails');
+        console.log('🔥 Firebase готов, clientId:', window.clientId);
         
-        // Элементы чатов
-        const chatList = document.getElementById('chatList');
+        // ===== Данные =====
+        const serviceTemplates = {
+    'counters': [
+        { name: 'Замена счетчика ХВС', price: 1500, default: true },
+        { name: 'Прокладка под счетчик', price: 300 },
+        { name: 'Кран шаровый', price: 800 },
+        { name: 'Выезд за материалом', price: 500 }
+    ],
+    'conditioners': [
+        { name: 'Чистка кондиционера', price: 2500, default: true },
+        { name: 'Антибактериальная чистка', price: 500 },
+        { name: 'Чистка дренажа', price: 1000 }
+    ],
+    'hobs': [
+        { name: 'Диагностика', price: 1000, default: true },
+        { name: 'Замена форсунок', price: 1500 }
+    ],
+    'washing': [
+        { name: 'Диагностика', price: 1000, default: true },
+        { name: 'Замена помпы', price: 2000 },
+        { name: 'Замена щеток', price: 1500 }
+    ],
+    'fridges': [
+        { name: 'Диагностика', price: 1000, default: true },
+        { name: 'Заправка фреоном', price: 3000 }
+    ],
+    'other': [
+        { name: 'Выезд и диагностика', price: 1000, default: true },
+        { name: 'Мелкий ремонт', price: 1500 }
+    ]
+};
+        // const services = [
+        //     { name: 'Замена счетчика ХВС', price: 1500 },
+        //     { name: 'Прокладка под счетчик', price: 300 },
+        //     { name: 'Кран шаровый', price: 800 },
+        //     { name: 'Выезд за материалом', price: 500 }
+        // ];
     
-        // Переменные состояния
-        let currentMasterKey = null;
-        let currentYear = new Date().getFullYear();
-        let currentMonth = new Date().getMonth() + 1;
-        let currentOrders = {};
+        const masterServices = [
+            { name: 'Чистка кондиционера', price: 'от 2500 ₽' },
+            { name: 'Антибактериальная чистка', price: 'от 500 ₽' },
+            { name: 'Чистка дренажа', price: 'от 1000 ₽' },
+            { name: 'Обслуживание кондиционеров', price: 'от 1500 ₽' }
+        ];
     
-        // ===== Утилиты =====
-        const generateKey = () => {
-            const adjectives = ['red', 'blue', 'green', 'yellow', 'big', 'small', 'fast', 'slow', 'cool', 'nice'];
-            const nouns = ['master', 'wizard', 'ninja', 'guru', 'hero', 'wolf', 'eagle', 'lion', 'bear', 'fox'];
-            const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
-            const noun = nouns[Math.floor(Math.random() * nouns.length)];
-            const num = Math.floor(Math.random() * 1000);
-            console.log(`🆕 Сгенерирован новый ключ: ${adj}-${noun}-${num}`);
-            return `${adj}-${noun}-${num}`;
-        };
-    
-        // ===== Загрузка профиля мастера =====
-        const loadMasterProfile = async (masterKey) => {
-            console.log(`📥 Загрузка профиля для ключа: ${masterKey}`);
+        // ===== Инициализация =====
+        window.onload = function() {
+            renderCheckout();
+            renderMasterServices();
             
-            try {
-                const masterRef = doc(db, "masters", masterKey);
-                const masterSnap = await getDoc(masterRef);
-                
-                if (masterSnap.exists()) {
-                    const data = masterSnap.data();
-                    console.log("✅ Профиль загружен:", data);
+            // Обработчики даты/времени
+            document.getElementById('orderDate').addEventListener('change', function() {
+                if (window.currentOrderNumber) {
+                    saveCheckoutToRTDB();
+                }
+            });
+            
+            document.getElementById('orderTime').addEventListener('change', function() {
+                if (window.currentOrderNumber) {
+                    saveCheckoutToRTDB();
+                }
+            });
+        };
 
-                        // Проставляем чекбоксы специализации
-    if (data.specializations && data.specializations.length) {
-        document.querySelectorAll('.service-checkbox').forEach(cb => cb.checked = false);
-        data.specializations.forEach(spec => {
-            const checkbox = document.querySelector(`.service-checkbox[value="${spec}"]`);
-            if (checkbox) checkbox.checked = true;
-        });
+        // window.onload = function() {
+        //     // initCanvas();
+        //     renderCheckout();
+        //     renderMasterServices();
+        // };
+    
+        // ===== Canvas анимация =====
+        // function initCanvas() {
+        //     const canvas = document.getElementById('backgroundCanvas');
+        //     const ctx = canvas.getContext('2d');
+            
+        //     function resize() {
+        //         canvas.width = window.innerWidth;
+        //         canvas.height = window.innerHeight;
+        //     }
+        //     resize();
+        //     window.addEventListener('resize', resize);
+    
+        //     const blobs = [];
+        //     for (let i = 0; i < 5; i++) {
+        //         blobs.push({
+        //             x: Math.random() * canvas.width,
+        //             y: Math.random() * canvas.height,
+        //             radius: 100 + Math.random() * 150,
+        //             speedX: 0.1 + Math.random() * 0.2,
+        //             speedY: 0.1 + Math.random() * 0.2,
+        //             color: `rgba(160, 192, 224, ${0.1 + Math.random() * 0.1})`
+        //         });
+        //     }
+    
+        //     function animate() {
+        //         ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+        //         blobs.forEach(blob => {
+        //             blob.x += blob.speedX;
+        //             blob.y += blob.speedY;
+                    
+        //             if (blob.x < -blob.radius) blob.x = canvas.width + blob.radius;
+        //             if (blob.x > canvas.width + blob.radius) blob.x = -blob.radius;
+        //             if (blob.y < -blob.radius) blob.y = canvas.height + blob.radius;
+        //             if (blob.y > canvas.height + blob.radius) blob.y = -blob.radius;
+                    
+        //             ctx.beginPath();
+        //             ctx.arc(blob.x, blob.y, blob.radius, 0, Math.PI * 2);
+        //             ctx.fillStyle = blob.color;
+        //             ctx.filter = 'blur(40px)';
+        //             ctx.fill();
+        //         });
+                
+        //         requestAnimationFrame(animate);
+        //     }
+            
+        //     animate();
+        // }
+    
+        function updateLandingPlates() {
+    // Убираем выделение со всех
+    document.querySelectorAll('.plate').forEach(plate => {
+        plate.classList.remove('active-plate');
+    });
+    
+    // Если есть выбранная услуга — выделяем её
+    if (window.selectedService) {
+        const plate = Array.from(document.querySelectorAll('.plate')).find(p => 
+            p.getAttribute('onclick')?.includes(window.selectedService)
+        );
+        if (plate) {
+            plate.classList.add('active-plate');
+        }
     }
-                    
-                    document.getElementById('masterName').textContent = data.name || 'Имя не указано';
-                    // document.getElementById('masterRating').textContent = `★ ${data.rating || 0}`;
-                    document.getElementById('masterStatus').textContent = data.status === 'online' ? '💚 Онлайн' : '🔴 Офлайн';
-                    document.getElementById('masterSpec').textContent = data.specializations?.join(' · ') || 'Специализация не указана';
-                    masterKeyDisplay.textContent = `Ключ: ${masterKey}`;
-                    
-                    document.getElementById('profileName').value = data.name || '';
-                    document.getElementById('profileSpec').value = data.specializations?.join(', ') || '';
-                    document.getElementById('profileAbout').value = data.about || '';
-                    document.getElementById('profilePhone').value = data.phone || '';
-                    document.getElementById('profileCity').value = data.city || '';
-                    document.getElementById('profileArea').value = data.serviceArea?.join(', ') || '';
-                    
-                    await updateDoc(masterRef, { status: 'online', updatedAt: new Date().toISOString() });
-                    
+}
+
+        // ===== Навигация =====
+        window.switchPage = function(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(page + 'Page').classList.add('active');
+    
+    document.querySelectorAll('.sidebar-item').forEach((item, index) => {
+        item.classList.toggle('active', 
+            (page === 'landing' && index === 0) ||
+            (page === 'chat' && index === 1) ||
+            (page === 'order' && index === 2) ||
+            (page === 'about' && index === 3)
+        );
+    });
+    
+    // Если открываем лэндинг
+    if (page === 'landing') {
+        // Показываем плашки (они могли быть скрыты после выбора услуги)
+        document.querySelector('.plates').style.display = 'flex';
+        // Обновляем выделение
+        updateLandingPlates();
+    }
+    
+    if (page === 'order') {
+        if (window.currentOrderNumber) {
+            // Проверяем статус в базе
+            const checkoutRef = ref(rtdb, `chats/${window.currentOrderNumber}/checkout`);
+            get(checkoutRef).then(snapshot => {
+                const checkout = snapshot.val();
+                const isApproved = checkout?.status === 'approved';
+                
+                // Номер заказа
+                document.getElementById('orderNumberDisplay').textContent = window.currentOrderNumber;
+                
+                // Статус
+                document.getElementById('orderStatusDisplay').textContent = isApproved ? '✅ Подтвержден' : '⏳ Черновик';
+                
+                // Имя клиента (в шапке)
+                document.getElementById('masterNameDisplay').textContent = window.clientName ? 'Для ' + window.clientName : 'Клиент';
+                
+                // Дата и время
+                if (isApproved && checkout?.schedule) {
+                    // Из базы
+                    const dateStr = checkout.schedule.date ? new Date(checkout.schedule.date).toLocaleDateString('ru') : 'дата';
+                    const timeStr = checkout.schedule.time || 'время';
+                    document.getElementById('orderDateTimeDisplay').innerHTML = `📅 ${dateStr} · ⏰ ${timeStr}`;
                 } else {
-                    console.log("🆕 Новый мастер, создаем профиль...");
-                    
-                    const newMaster = {
-                        name: "Новый мастер",
-                        rating: 0,
-                        status: "online",
-                        specializations: [],
-                        createdAt: new Date().toISOString(),
-                        updatedAt: new Date().toISOString()
-                    };
-                    
-                    await setDoc(masterRef, newMaster);
-                    console.log("✅ Новый профиль создан");
-                    
-                    await loadMasterProfile(masterKey);
+                    // Из интерфейса (превью)
+                    const dateInput = document.getElementById('orderDate');
+                    const timeInput = document.getElementById('orderTime');
+                    document.getElementById('orderDateTimeDisplay').innerHTML = `📅 ${dateInput?.value || 'дата'} · ⏰ ${timeInput?.value || 'время'}`;
                 }
-            } catch (error) {
-                console.error("❌ Ошибка загрузки профиля:", error);
-                authError.textContent = 'Ошибка загрузки. Проверьте консоль.';
-            }
-        };
-    
-        document.querySelectorAll('.service-checkbox').forEach(cb => {
-            cb.addEventListener('change', function() {
-                const selected = Array.from(document.querySelectorAll('.service-checkbox:checked'))
-                    .map(c => c.value);
                 
-                // Сохраняем в профиль мастера
-                if (window.currentMasterKey) {
-                    const masterRef = doc(db, "masters", window.currentMasterKey);
-                    updateDoc(masterRef, {
-                        specializations: selected,
-                        updatedAt: new Date().toISOString()
+                // Услуги
+                const orderItems = document.getElementById('orderItems');
+                orderItems.innerHTML = '';
+                
+                if (isApproved && checkout?.items) {
+                    // Из базы
+                    Object.entries(checkout.items).forEach(([name, item]) => {
+                        if (item.status === 'pending' || item.status === 'approved') {
+                            const div = document.createElement('div');
+                            div.className = 'order-item';
+                            div.innerHTML = `<span>${name}</span><span>${item.price.toLocaleString()} ₽</span>`;
+                            orderItems.appendChild(div);
+                        }
                     });
-                }
-            });
-        });
-
-        // ===== Загрузка услуг =====
-        const loadServices = async (masterKey) => {
-            console.log(`📥 Загрузка услуг для ключа: ${masterKey}`);
-            
-            const servicesList = document.getElementById('servicesList');
-            
-            try {
-                const servicesRef = collection(db, "masters", masterKey, "services");
-                const q = query(servicesRef, orderBy("order"));
-                const querySnapshot = await getDocs(q);
-                
-                console.log(`📊 Загружено услуг: ${querySnapshot.size}`);
-                
-                if (querySnapshot.empty) {
-                    servicesList.innerHTML = `
-                        <div class="empty-state">
-                            У вас пока нет услуг.<br>
-                            <button class="add-category-btn" style="margin-top: 1rem;" onclick="document.getElementById('addCategoryBtn').click()">+ Добавить первую категорию</button>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                const categories = {};
-                querySnapshot.forEach((doc) => {
-                    const service = { id: doc.id, ...doc.data() };
-                    const cat = service.category || 'Без категории';
-                    if (!categories[cat]) categories[cat] = [];
-                    categories[cat].push(service);
-                });
-                
-                console.log(`📁 Найдено категорий: ${Object.keys(categories).length}`);
-                
-                let html = '';
-                for (const [catName, services] of Object.entries(categories)) {
-                    html += `
-                        <div class="service-category" data-category="${catName}">
-                            <div class="category-header" onclick="toggleCategory(this)">
-                                <span class="category-title">
-                                    <input type="text" value="${catName}" onchange="updateCategory('${catName}', this.value)" onclick="event.stopPropagation()">
-                                </span>
-                                <div class="category-actions">
-                                    <button class="action-btn" onclick="event.stopPropagation(); deleteCategory('${catName}')">🗑️</button>
-                                    <button class="action-btn" onclick="event.stopPropagation(); toggleCategory(this.parentElement.parentElement)">▼</button>
-                                </div>
-                            </div>
-                            <div class="services-list" style="display: block;">
-                    `;
-                    
-                    services.forEach(service => {
-                        html += `
-                            <div class="service-item" data-service-id="${service.id}">
-                                <span class="service-name">
-                                    <input type="text" value="${service.name || ''}" onchange="updateService('${service.id}', 'name', this.value)">
-                                </span>
-                                <span class="service-price">
-                                    <input type="number" value="${service.price || 0}" onchange="updateService('${service.id}', 'price', this.value)"> ₽
-                                    <button class="action-btn" onclick="deleteService('${service.id}')">🗑️</button>
-                                </span>
-                            </div>
-                        `;
-                    });
-                    
-                    html += `
-                                <button class="add-service-btn" onclick="addService('${catName}')">+ Добавить услугу</button>
-                            </div>
-                        </div>
-                    `;
-                }
-                
-                servicesList.innerHTML = html;
-                
-                window.toggleCategory = (el) => {
-                    const list = el.closest('.service-category').querySelector('.services-list');
-                    list.style.display = list.style.display === 'none' ? 'block' : 'none';
-                };
-                
-            } catch (error) {
-                console.error("❌ Ошибка загрузки услуг:", error);
-                servicesList.innerHTML = '<div class="empty-state">Ошибка загрузки услуг</div>';
-            }
-        };
-    
-        // ===== CRUD операции для услуг =====
-        window.updateCategory = async (oldName, newName) => {
-            if (!currentMasterKey || oldName === newName) return;
-            console.log(`✏️ Переименование категории: ${oldName} -> ${newName}`);
-            
-            const servicesRef = collection(db, "masters", currentMasterKey, "services");
-            const q = query(servicesRef, where("category", "==", oldName));
-            const snapshot = await getDocs(q);
-            
-            snapshot.forEach(async (docSnap) => {
-                await updateDoc(docSnap.ref, { category: newName });
-            });
-            
-            await loadServices(currentMasterKey);
-        };
-        
-        window.deleteCategory = async (catName) => {
-            if (!currentMasterKey || !confirm(`Удалить категорию "${catName}" и все услуги в ней?`)) return;
-            console.log(`🗑️ Удаление категории: ${catName}`);
-            
-            const servicesRef = collection(db, "masters", currentMasterKey, "services");
-            const q = query(servicesRef, where("category", "==", catName));
-            const snapshot = await getDocs(q);
-            
-            snapshot.forEach(async (docSnap) => {
-                await deleteDoc(docSnap.ref);
-            });
-            
-            await loadServices(currentMasterKey);
-        };
-        
-        window.addService = async (category) => {
-            if (!currentMasterKey) return;
-            console.log(`➕ Добавление услуги в категорию: ${category}`);
-            
-            const servicesRef = collection(db, "masters", currentMasterKey, "services");
-            await addDoc(servicesRef, {
-                category: category,
-                name: 'Новая услуга',
-                price: 0,
-                order: Date.now()
-            });
-            
-            await loadServices(currentMasterKey);
-        };
-        
-        window.updateService = async (serviceId, field, value) => {
-            if (!currentMasterKey) return;
-            console.log(`✏️ Обновление услуги ${serviceId}: ${field} = ${value}`);
-            
-            const serviceRef = doc(db, "masters", currentMasterKey, "services", serviceId);
-            await updateDoc(serviceRef, { [field]: field === 'price' ? Number(value) : value });
-        };
-        
-        window.deleteService = async (serviceId) => {
-            if (!currentMasterKey || !confirm('Удалить услугу?')) return;
-            console.log(`🗑️ Удаление услуги: ${serviceId}`);
-            
-            const serviceRef = doc(db, "masters", currentMasterKey, "services", serviceId);
-            await deleteDoc(serviceRef);
-            await loadServices(currentMasterKey);
-        };
-    
-        document.getElementById('addCategoryBtn').addEventListener('click', async () => {
-            if (!currentMasterKey) return;
-            
-            const catName = prompt('Название категории:');
-            if (!catName) return;
-            
-            console.log(`➕ Добавление категории: ${catName}`);
-            
-            const servicesRef = collection(db, "masters", currentMasterKey, "services");
-            await addDoc(servicesRef, {
-                category: catName,
-                name: 'Новая услуга',
-                price: 0,
-                order: Date.now()
-            });
-            
-            await loadServices(currentMasterKey);
-        });
-    
-        // ===== Загрузка заказов для календаря =====
-        const loadOrdersForCalendar = async (masterKey, year, month) => {
-    console.log(`📥 Загрузка заказов из RTDB за ${year}-${month}...`);
-    
-    return new Promise((resolve) => {
-        const chatsRef = ref(rtdb, 'chats');
-        
-        onValue(chatsRef, (snapshot) => {
-            const chats = snapshot.val() || {};
-            
-            const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
-            const endDate = `${year}-${String(month).padStart(2, '0')}-31`;
-            
-            const ordersByDate = {};
-            
-            Object.entries(chats).forEach(([chatId, chat]) => {
-                if (chat.masterId === masterKey && 
-                    chat.checkout && 
-                    chat.checkout.status === 'approved' &&
-                    chat.checkout.schedule?.date) {
-                    
-                    const date = chat.checkout.schedule.date;
-                    
-                    if (date >= startDate && date <= endDate) {
-                        if (!ordersByDate[date]) ordersByDate[date] = [];
+                } else {
+                    // Из интерфейса (превью)
+                    let total = 0;
+                    document.querySelectorAll('#checkoutItems .checkout-item input:checked').forEach(cb => {
+                        const item = cb.closest('.checkout-item');
+                        const name = item.querySelector('.checkout-item-name').textContent;
+                        const priceText = item.querySelector('.checkout-item-price').textContent;
+                        const price = parseInt(priceText.replace(/[^\d]/g, ''));
                         
-                        ordersByDate[date].push({
-                            id: chatId,
-                            time: chat.checkout.schedule.time || '00:00',
-                            clientId: chat.clientId,
-                            clientName: chat.clientName || chat.clientId || '???',
-                            services: Object.entries(chat.checkout.items || {})
-                            .map(([name, item]) => ({ name, price: item.price, status: item.status })),
-                            total: chat.checkout.total,
-                            status: 'В работе'
-                        });
-                    }
+                        const div = document.createElement('div');
+                        div.className = 'order-item';
+                        div.innerHTML = `<span>${name}</span><span>${price.toLocaleString()} ₽</span>`;
+                        orderItems.appendChild(div);
+                        
+                        total += price;
+                    });
+                    
+                    // Сохраняем сумму для итога
+                    window.previewTotal = total;
                 }
-            });
-            
-            console.log(`📦 Найдено заказов:`, ordersByDate);
-            resolve(ordersByDate);
-            
-        }, { onlyOnce: true });  // ← только один раз, как get
-    });
-};
-
-
-// ===== Отрисовка календаря =====
-        const renderCalendar = (year, month, orders = {}) => {
-            console.log(`📅 Отрисовка календаря: ${year}-${month}`);
-            
-            currentOrders = orders;
-            monthTitle.textContent = new Date(year, month - 1).toLocaleString('ru', { month: 'long', year: 'numeric' });
-            
-            const firstDay = new Date(year, month - 1, 1).getDay();
-            const daysInMonth = new Date(year, month, 0).getDate();
-            
-            let html = '';
-            
-            for (let i = 0; i < (firstDay === 0 ? 6 : firstDay - 1); i++) {
-                html += '<div class="calendar-day empty"></div>';
-            }
-            
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const hasOrders = orders[dateStr] && orders[dateStr].length > 0;
                 
-                html += `
-                    <div class="calendar-day ${hasOrders ? 'has-orders' : ''}" onclick="showDayDetails('${dateStr}')">
-                        <span class="day-number">${day}</span>
-                        ${hasOrders ? '<span class="busy-indicator">●</span>' : ''}
-                    </div>
-                `;
-            }
-            
-            calendarGrid.innerHTML = html;
-        };
-
-        window.showDayDetails = (dateStr) => {
-    console.log(`📅 Показ деталей для даты: ${dateStr}`);
-    
-    const orders = currentOrders[dateStr] || [];
-    
-    if (orders.length === 0) {
-        dayDetails.innerHTML = `
-            <div class="selected-date">${new Date(dateStr).toLocaleDateString('ru')}</div>
-            <div class="empty-state">Нет записей на этот день</div>
-        `;
-        return;
-    }
-    
-    let slotsHtml = '';
-    
-    orders.forEach(order => {
-        let servicesList = '';
-        if (order.services && order.services.length > 0) {
-            servicesList = order.services.map(s => 
-                `&nbsp;&nbsp;• ${s.name} (${s.price}₽)`
-            ).join('<br>');
+                // Итог
+                const total = isApproved ? checkout?.total : window.previewTotal;
+                document.getElementById('orderTotal').textContent = (total?.toLocaleString() || '0') + ' ₽';
+                
+                // Показываем контент, скрываем заглушку
+                document.getElementById('orderContent').style.display = 'block';
+                document.getElementById('orderPlaceholder').style.display = 'none';
+            });
         } else {
-            servicesList = '&nbsp;&nbsp;❌ нет услуг';
+            // Нет заказа — показываем заглушку
+            document.getElementById('orderContent').style.display = 'none';
+            document.getElementById('orderPlaceholder').style.display = 'block';
         }
-        
-        // Берем полный clientId без обрезки
-        const fullClientId = order.clientName || '???';
-        // const fullClientId = order.clientId || '???';
-        
-        slotsHtml += `
-            <div class="slot-card">
-                <span class="slot-time">${order.time || '00:00'}</span>
-                <div class="slot-info">
-                    <div class="slot-title">Услуги:</div>
-                    <div style="font-size: 0.9rem; margin: 0.3rem 0;">${servicesList}</div>
-                    <div class="slot-subtitle">Клиент: ${fullClientId}</div>
-                    <div class="slot-subtitle">Сумма: ${order.total}₽</div>
-                </div>
-                <span class="slot-status status-busy">${order.status || 'В работе'}</span>
-            </div>
-        `;
-    });
+    }
+
+
     
-    dayDetails.innerHTML = `
-        <div class="selected-date">${new Date(dateStr).toLocaleDateString('ru')}</div>
-        <div class="slots-list">${slotsHtml}</div>
-    `;
+    // if (page === 'order') {
+    // if (window.currentOrderNumber && window.currentOrderNumber !== 'no-master-available') {
+    //     document.getElementById('orderContent').style.display = 'block';
+    //     document.getElementById('orderPlaceholder').style.display = 'none';
+    // } else {
+    //     document.getElementById('orderContent').style.display = 'none';
+    //     document.getElementById('orderPlaceholder').style.display = 'block';
+    // }   
+    // }
+
+    if (page === 'chat') {
+    if (window.currentOrderNumber && window.currentOrderNumber !== 'no-master-available') {
+        document.getElementById('chatContent').style.display = 'block';
+        document.getElementById('chatPlaceholder').style.display = 'none';
+    } else {
+        document.getElementById('chatContent').style.display = 'none';
+        document.getElementById('chatPlaceholder').style.display = 'block';
+    }
+}
 };
 
-        prevMonthBtn.addEventListener('click', async () => {
-            if (currentMonth === 1) {
-                currentYear--;
-                currentMonth = 12;
-            } else {
-                currentMonth--;
-            }
-            console.log(`📅 Переход на месяц: ${currentYear}-${currentMonth}`);
-            
-            if (currentMasterKey) {
-                const orders = await loadOrdersForCalendar(currentMasterKey, currentYear, currentMonth);
-                renderCalendar(currentYear, currentMonth, orders);
-            }
-        });
-        
-        nextMonthBtn.addEventListener('click', async () => {
-            if (currentMonth === 12) {
-                currentYear++;
-                currentMonth = 1;
-            } else {
-                currentMonth++;
-            }
-            console.log(`📅 Переход на месяц: ${currentYear}-${currentMonth}`);
-            
-            if (currentMasterKey) {
-                const orders = await loadOrdersForCalendar(currentMasterKey, currentYear, currentMonth);
-                renderCalendar(currentYear, currentMonth, orders);
-            }
-        });
-   
-            // ===== Загрузка чатов из Realtime Database =====
-const loadMasterChats = (masterKey) => {
-    console.log(`🔍 Загрузка чатов для мастера: ${masterKey}`);
+        window.showOrderRestore = function() {
+            document.querySelector('.plates').style.display = 'none';
+            document.getElementById('restoreForm').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
 
-    console.log('🔥 Проверка базы:', rtdb);
-console.log('🔥 Путь к чатам:', 'chats');
-
-const testRef = ref(rtdb, 'chats/599785');
-get(testRef).then(snapshot => {
-    console.log('🔥 Данные чата 599785:', snapshot.val());
-}).catch(err => {
-    console.error('🔥 Ошибка:', err);
-});
+        // Генерирует 6-значный номер от 100000 до 999999
+function generateOrderNumber() {
+    return Math.floor(100000 + Math.random() * 900000);
+}
+// Проверяет, свободен ли номер в базе
+async function isOrderNumberUnique(number) {
+    try {
+        // Проверяем в Realtime Database
+        const response = await fetch(
+            `https://creator-75dac-default-rtdb.europe-west1.firebasedatabase.app/chats/${number}.json`
+        );
+        const data = await response.json();
+        return data === null; // если null — номер свободен
+    } catch (error) {
+        console.error('Ошибка проверки номера:', error);
+        return false;
+    }
+}
+// Генерирует уникальный номер
+async function getUniqueOrderNumber() {
+    let attempts = 0;
+    const maxAttempts = 10;
     
-    if (!masterKey) {
-        console.log('❌ Нет ключа мастера');
-        chatList.innerHTML = '<div class="empty-state">Ошибка: нет ключа</div>';
+    while (attempts < maxAttempts) {
+        const number = generateOrderNumber();
+        const isUnique = await isOrderNumberUnique(number);
+        
+        if (isUnique) {
+            console.log(`✅ Найден свободный номер: ${number}`);
+            return number;
+        }
+        
+        attempts++;
+        console.log(`🔄 Попытка ${attempts}: номер ${number} занят`);
+    }
+    
+    // Если за 10 попыток не нашли — расширяем до 7 знаков
+    console.log('⚠️ 6-значные номера закончились, генерируем 7-значный');
+    return Math.floor(1000000 + Math.random() * 9000000);
+}
+// ===== Генерация номера заказа =====
+window.generateOrderNumber = function() {
+    return Math.floor(100000 + Math.random() * 900000);
+};
+
+window.isOrderNumberUnique = async function(number) {
+    try {
+        const response = await fetch(
+            `https://creator-75dac-default-rtdb.europe-west1.firebasedatabase.app/chats/${number}.json`
+        );
+        const data = await response.json();
+        return data === null;
+    } catch (error) {
+        console.error('Ошибка проверки номера:', error);
+        return false;
+    }
+};
+
+window.getUniqueOrderNumber = async function() {
+    let attempts = 0;
+    const maxAttempts = 10;
+    
+    while (attempts < maxAttempts) {
+        const number = generateOrderNumber();
+        const isUnique = await isOrderNumberUnique(number);
+        
+        if (isUnique) {
+            console.log(`✅ Свободный номер: ${number}`);
+            return number;
+        }
+        
+        attempts++;
+        console.log(`🔄 Номер ${number} занят, пробуем ещё`);
+    }
+    
+    console.log('⚠️ 6-значные кончились, берём 7-значный');
+    return Math.floor(1000000 + Math.random() * 9000000);
+};
+
+document.getElementById('startChatBtn').addEventListener('click', async function() {
+    const clientName = document.getElementById('clientNameInput').value.trim();
+    
+    if (!clientName) {
+        alert('Пожалуйста, представьтесь');
         return;
     }
+    
+    window.clientName = clientName; // запоминаем имя для отправки сообщений
+    
+    // Определяем мастера по услуге
+    const masterByService = {
+        'counters': 'master-1',
+        'conditioners': 'master-1',
+        'hobs': 'master-2',
+        'washing': 'master-3',
+        'fridges': 'master-3',
+        'other': 'master-3'
+    };
+    
+    // const masterId = masterByService[window.selectedService];
+    // Ищем мастера с нужной специализацией
+const mastersRef = collection(db, "masters");
+const q = query(mastersRef, where("specializations", "array-contains", window.selectedService));
+const querySnapshot = await getDocs(q);
 
-    chatList.innerHTML = '<div class="loading">Загрузка чатов...</div>';
+let masterId = 'no-master-available';
+
+if (!querySnapshot.empty) {
+    const masterDoc = querySnapshot.docs[0];
+    masterId = masterDoc.id;
+    const masterData = masterDoc.data();
     
-    const chatsRef = ref(rtdb, 'chats');
+    console.log('Найден мастер:', masterId, masterData);
     
-    onValue(chatsRef, (snapshot) => {
-        const data = snapshot.val();
-        console.log('📥 Все чаты из RTDB:', data);
-        
-        if (!data) {
-            console.log('📭 Нет данных в RTDB');
-            chatList.innerHTML = '<div class="empty-state">Пока нет переписок</div>';
-            return;
-        }
-        
-        const masterChats = [];
-        for (const [orderNumber, chat] of Object.entries(data)) {
-            // Проверяем, что чат принадлежит этому мастеру
-            if (chat.masterId === masterKey) {
-                masterChats.push({ 
-                    id: orderNumber,  // теперь id = номер заказа
-                    orderNumber: orderNumber,
-                    ...chat 
-                });
-            }
-        }
-        
-        console.log(`🔎 Найдено чатов для мастера ${masterKey}:`, masterChats.length);
-        
-        if (masterChats.length === 0) {
-            chatList.innerHTML = '<div class="empty-state">Пока нет переписок</div>';
-            return;
-        }
-        
-        // Сортируем по дате создания (новые сверху)
-        masterChats.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-        
-        let html = '';
-        masterChats.forEach(chat => {
-            const lastMsg = chat.lastMessage || {};
-            const time = lastMsg.timestamp 
-                ? new Date(lastMsg.timestamp).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' }) 
-                : '';
+    // Сохраняем данные мастера
+    window.currentMasterData = masterData;
+    window.currentMasterId = masterId;
+    
+    // Обновляем шапку чата
+    document.querySelector('.master-name').textContent = masterData.name || 'Мастер';
+    
+    // Специализации
+    const specTags = document.querySelector('.specialization');
+    specTags.innerHTML = '';
+    if (masterData.specializations && masterData.specializations.length) {
+        masterData.specializations.forEach(spec => {
+            const tag = document.createElement('span');
+            tag.className = 'spec-tag';
             
-            // Используем clientName или номер заказа
-            const clientDisplay = chat.clientName || `Заказ №${chat.orderNumber}`;
-            
-            // Проверка на непрочитанные (от клиента и не прочитано мастером)
-            const unread = lastMsg.senderId !== masterKey && !lastMsg.read ? 1 : 0;
-            
-            const msgText = lastMsg.text 
-                ? (lastMsg.text.length > 30 ? lastMsg.text.slice(0, 30) + '...' : lastMsg.text) 
-                : 'Нет сообщений';
-            
-            // Иконка услуги
-            const serviceIcons = {
+            // Иконки для специализаций
+            const icons = {
                 'counters': '💧',
                 'conditioners': '❄️',
                 'hobs': '🔥',
@@ -2009,604 +1880,964 @@ get(testRef).then(snapshot => {
                 'fridges': '❄️',
                 'other': '🔧'
             };
-            const icon = serviceIcons[chat.service] || '💬';
-            
-            html += `
-                <div class="chat-item" onclick="openMasterChat('${chat.orderNumber}', '${chat.clientName || ''}')">
-                    <div class="chat-avatar">${icon}</div>
-                    <div class="chat-info">
-                        <div class="chat-name-row">
-                            <span class="chat-name">${clientDisplay}</span>
-                            <span class="chat-time">${time}</span>
-                        </div>
-                        <div class="chat-preview">
-                            <span>${msgText}</span>
-                            ${unread ? '<span class="unread-badge">' + unread + '</span>' : ''}
-                        </div>
-                        <div style="font-size: 0.7rem; color: #8a9bb8; margin-top: 4px;">
-                            Заказ №${chat.orderNumber}
-                        </div>
-                    </div>
-                </div>
-            `;
+            tag.textContent = (icons[spec] || '🔹') + ' ' + spec;
+            specTags.appendChild(tag);
+        });
+    }
+    
+    document.getElementById('debugMasterInfo').innerHTML = `Мастер: ${masterId}`;
+}
+
+// if (!querySnapshot.empty) {
+//     // Берём первого попавшегося (пока так)
+//     const masterDoc = querySnapshot.docs[0];
+//     masterId = masterDoc.id; // это ключ мастера
+    
+//     console.log('Найден мастер:', masterId, masterDoc.data());
+//     document.getElementById('debugMasterInfo').innerHTML = `Мастер: ${masterId} (ключ: ${masterDoc.id})`;
+// }
+    
+    // Создаём чат в базе
+    
+    const chatData = {
+    masterId: masterId,  // либо ключ, либо 'no-master-available'
+    clientName: clientName,
+    createdAt: Date.now(),
+    service: window.selectedService,
+    status: 'active'
+};
+    
+    try {
+        await fetch(`https://creator-75dac-default-rtdb.europe-west1.firebasedatabase.app/chats/${window.currentOrderNumber}.json`, {
+            method: 'PUT',
+            body: JSON.stringify(chatData)
         });
         
-        chatList.innerHTML = html;
-        console.log('✅ Чаты отрисованы');
+        console.log('✅ Чат создан, номер:', window.currentOrderNumber);
         
-    }, (error) => {
-        console.error('❌ Ошибка загрузки чатов:', error);
-        chatList.innerHTML = '<div class="empty-state">Ошибка загрузки</div>';
-    });
+        // Скрываем форму, показываем чат
+        document.getElementById('nameForm').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none'; 
+        switchPage('chat');
+        
+        // ПОДПИСКА НА СООБЩЕНИЯ
+        const messagesRef = ref(rtdb, `chats/${window.currentOrderNumber}/messages`);
+        onValue(messagesRef, (snapshot) => {
+            const messagesDiv = document.getElementById('chatMessages');
+            if (!messagesDiv) return;
+            
+            messagesDiv.innerHTML = '';
+            
+            if (!snapshot.exists()) {
+                // Можно показать приветствие
+                return;
+            }
+            
+            // Преобразуем объект в массив
+            const messages = [];
+            snapshot.forEach((child) => {
+                messages.push({ id: child.key, ...child.val() });
+            });
+            
+            // Сортируем по времени (старые сверху)
+            messages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+            
+            // Отрисовываем
+            messages.forEach(msg => {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `message ${msg.senderId === 'client' ? 'client' : 'master'}`;
+                msgDiv.textContent = msg.text;
+                messagesDiv.appendChild(msgDiv);
+            });
+            
+            // Скроллим вниз
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        });
+        
+        // Сохраняем номер в localStorage для возврата
+        localStorage.setItem('lastOrderNumber', window.currentOrderNumber);
+        
+    } catch (error) {
+        console.error('❌ Ошибка создания чата:', error);
+        alert('Ошибка, попробуйте ещё раз');
+    }
+});
+
+window.switchToChat = async function(service) {
+    // 1. Генерируем номер заказа
+    const orderNumber = await getUniqueOrderNumber();
+    window.currentOrderNumber = orderNumber;
+    
+    // 2. Запоминаем выбранную услугу
+    window.selectedService = service;
+    renderCheckout();  // ← добавить сюда
+    // 3. Показываем форму с номером
+    document.getElementById('orderNumberDisplayNew').textContent = orderNumber;
+    // document.getElementById('orderNumberDisplay').textContent = orderNumber;
+    document.querySelector('.plates').style.display = 'none';
+    document.getElementById('nameForm').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
 };
 
-        document.getElementById('saveProfileBtn').addEventListener('click', async () => {
-            if (!currentMasterKey) {
-                console.error('❌ Нет ключа мастера');
-                return;
-            }
+        function updateChatTitle(service) {
+            const chatTitle = document.querySelector('.chat-column .chat-title');
+            if (!chatTitle) return;
             
-            console.log('💾 Сохранение профиля...');
-            
-            const data = {
-                name: document.getElementById('profileName').value,
-                specializations: document.getElementById('profileSpec').value.split(',').map(s => s.trim()),
-                about: document.getElementById('profileAbout').value,
-                phone: document.getElementById('profilePhone').value,
-                city: document.getElementById('profileCity').value,
-                serviceArea: document.getElementById('profileArea').value.split(',').map(s => s.trim()),
-                status: 'online',
-                updatedAt: new Date().toISOString()
+            // Словарь для красивых названий
+            const serviceNames = {
+                'counters': '💧 Счётчики воды',
+                'conditioners': '❄️ Кондиционеры',
+                'washing': '🧺 Стиральные машинки',
+                'fridges': '❄️ Холодильники',
+                'hobs': '🔥 Варочные панели',
+                'other': '🔧 Прочее'
             };
             
-            try {
-                const masterRef = doc(db, "masters", currentMasterKey);
-                await updateDoc(masterRef, data);
-                console.log('✅ Профиль сохранен');
-                await loadMasterProfile(currentMasterKey);
-                alert('Профиль сохранен');
-            } catch (error) {
-                console.error('❌ Ошибка сохранения:', error);
-                alert('Ошибка сохранения');
-            }
-        });
-    
-        // ===== Вход по ключу =====
-        loginBtn.addEventListener('click', async () => {
-            const key = masterKeyInput.value.trim();
-            console.log(`🔑 Попытка входа с ключом: ${key}`);
-            
-            if (!key) {
-                authError.textContent = 'Введите ключ';
-                return;
-            }
-            
-            authError.textContent = '';
-            currentMasterKey = key;
-            window.currentMasterKey = key;
-            
-            authScreen.style.display = 'none';
-            cabinet.style.display = 'block';
-            
-            await loadMasterProfile(key);
-            await loadServices(key);
-            
-            const orders = await loadOrdersForCalendar(key, currentYear, currentMonth);
-            renderCalendar(currentYear, currentMonth, orders);
-            
-            loadMasterChats(key);
-//             // ТЕСТ: запускаем через 2 секунды после входа
-// setTimeout(() => {
-//     window.testRealtime();
-// }, 2000);
+            const displayName = serviceNames[service] || service;
+            chatTitle.innerHTML = `💬 Чат · <span style="color: #8fb0d0; font-weight: 700;">${displayName}</span>`;
+        }
 
-        });
-    
-        // ===== Генерация нового ключа =====
-        generateBtn.addEventListener('click', () => {
-            const newKey = generateKey();
-            masterKeyInput.value = newKey;
-            authError.textContent = '✅ Новый ключ сгенерирован. Сохраните его!';
-            authError.style.color = 'green';
-        });
-    
-        // ===== Выход =====
-        logoutBtn.addEventListener('click', async () => {
-            console.log('👋 Выход из кабинета');
+        function fillOrderPage(checkout, orderNumber) {
+            document.getElementById('orderNumberDisplay').textContent = orderNumber;
+            document.getElementById('orderStatusDisplay').textContent = '✅ Подтвержден';
             
-            if (currentMasterKey) {
-                try {
-                    await updateDoc(doc(db, "masters", currentMasterKey), { 
-                        status: 'offline',
-                        updatedAt: new Date().toISOString()
-                    });
-                    
-                    const chatsRef = ref(rtdb, 'chats');
-                    const chatsQuery = rtdbQuery(chatsRef, orderByChild('masterId'), equalTo(currentMasterKey));
-                    off(chatsQuery);
-                    
-                } catch (error) {
-                    console.error('Ошибка при выходе:', error);
-                }
-            }
-            
-            cabinet.style.display = 'none';
-            authScreen.style.display = 'flex';
-            masterKeyInput.value = '';
-            authError.textContent = '';
-            authError.style.color = 'red';
-            currentMasterKey = null;
-            window.currentMasterKey = null;
-        });
-    
-        // ===== Переключение вкладок =====
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                console.log(`📂 Переключение на вкладку: ${tab.dataset.tab}`);
-                
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                document.querySelector('.price-tab').style.display = 'none';
-                document.querySelector('.calendar-tab').style.display = 'none';
-                document.querySelector('.chats-tab').style.display = 'none';
-                document.querySelector('.profile-tab').style.display = 'none';
-                
-                const tabName = tab.dataset.tab;
-                if (tabName === 'price') document.querySelector('.price-tab').style.display = 'block';
-                if (tabName === 'calendar') document.querySelector('.calendar-tab').style.display = 'block';
-                if (tabName === 'chats') document.querySelector('.chats-tab').style.display = 'block';
-                if (tabName === 'profile') document.querySelector('.profile-tab').style.display = 'block';
-                
-                // При переключении на чаты обновляем список
-                if (tabName === 'chats' && window.currentMasterKey) {
-                    setTimeout(() => {
-                        loadMasterChats(window.currentMasterKey);
-                    }, 100);
-                }
-            });
-        });
-   
-        // ===== ФУНКЦИИ ЧАТА =====
-        window.openMasterChat = function(chatId, clientId) {
-            console.log('💬 Открыт чат:', chatId, 'клиент:', clientId);
-            window.currentChatId = chatId;
-            const chatList = document.getElementById('chatList');
-            chatList.style.display = 'none';
-            
-            let chatContainer = document.getElementById('activeChatContainer');
-            if (!chatContainer) {
-                chatContainer = document.createElement('div');
-                chatContainer.id = 'activeChatContainer';
-                chatContainer.className = 'active-chat two-columns';
-                document.querySelector('.chats-tab').appendChild(chatContainer);
-            }
-            
-            chatContainer.innerHTML = `
-                <div class="chat-column" style="flex: 1;">
-                    <div class="chat-header">
-                        <button class="back-btn" onclick="closeMasterChat()">←</button>
-                        <span class="chat-title">Чат с клиентом ${clientId?.slice(0, 8) || ''}</span>
-                    </div>
-                    <div class="chat-messages" id="masterChatMessages"></div>
-                    <div class="chat-input-wrapper">
-                        <input type="text" class="chat-input" id="masterChatInput" placeholder="Введите сообщение...">
-                        <button class="send-btn" onclick="sendMasterMessage('${chatId}')">→</button>
-                    </div>
-                </div>
-                <div class="checkout-column" style="flex: 1;">
-                    <div class="chat-title">🔧 Чек-билдер</div>
-                    <div class="checkout-items" id="masterCheckoutItems"></div>
-                    <div class="total-row">
-                        <span class="total-label">ИТОГО:</span>
-                        <span class="total-value" id="masterTotalValue">0 ₽</span>
-                    </div>
-                    <div style="display: none; gap: 0.5rem; margin-top: 1rem;">
-                        <button class="order-btn" style="flex: 1;" onclick="approveCheckout('${chatId}')">✅ Утвердить</button>
-                        <button class="order-btn" style="flex: 1; background: #e74c3c;" onclick="rejectCheckout('${chatId}')">❌ Отклонить</button>
-                    </div>
-                </div>
-            `;
-            
-            // ===== ПОДПИСКА НА СООБЩЕНИЯ (REALTIME) =====
-            const messagesDiv = document.getElementById('masterChatMessages');
-            const messagesRef = ref(window.rtdb, `chats/${chatId}/messages`);
-            
-            onValue(messagesRef, (snapshot) => {
-                console.log('📥 onValue сообщения сработал');
-                
-                messagesDiv.innerHTML = ''; // Очищаем
-                
-                if (!snapshot.exists()) {
-                    messagesDiv.innerHTML = '<div class="message">Нет сообщений</div>';
-                    return;
-                }
-                
-                // Преобразуем объект в массив и сортируем по времени
-                const messages = [];
-                snapshot.forEach((child) => {
-                    messages.push({ id: child.key, ...child.val() });
-                });
-                
-                // Сортируем от старых к новым
-                messages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
-                
-                // Отрисовываем
-                messages.forEach(msg => {
-                    const msgDiv = document.createElement('div');
-                    msgDiv.className = `message ${msg.senderId === window.currentMasterKey ? 'master' : 'client'}`;
-                    
-                    const time = msg.timestamp 
-                        ? new Date(msg.timestamp).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' })
-                        : '';
-                    
-                    msgDiv.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                            <span style="font-weight: bold;">${msg.senderId === window.currentMasterKey ? 'Я' : 'Клиент'}</span>
-                            <span style="font-size: 0.7rem; opacity: 0.7;">${time}</span>
-                        </div>
-                        <div>${msg.text}</div>
-                    `;
-                    
-                    messagesDiv.appendChild(msgDiv);
-                });
-                
-                // Скроллим вниз
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }, (error) => {
-                console.error('❌ Ошибка подписки на сообщения:', error);
-                messagesDiv.innerHTML = '<div class="message">Ошибка загрузки сообщений</div>';
-            });
-
-            // Загружаем чек-билдер (пока оставляем как есть)
-            subscribeToCheckout(chatId);
-        };
-    
-        window.closeMasterChat = function() {
-            const chatList = document.getElementById('chatList');
-            chatList.style.display = 'block';
-            
-            const container = document.getElementById('activeChatContainer');
-            if (container) {
-                container.remove();
-            }
-        };
-                // ===== ЗАГРУЗКА СООБЩЕНИЙ ЧАТА (REALTIME) =====
-        window.loadMasterMessages = function(chatId) {
-            console.log('📥 Подписка на сообщения чата:', chatId);
-            
-            const messagesDiv = document.getElementById('masterChatMessages');
-            if (!messagesDiv) {
-                console.error('❌ masterChatMessages не найден');
-                return;
-            }
-            
-            // Показываем загрузку
-            messagesDiv.innerHTML = '<div class="message">Загрузка сообщений...</div>';
-            
-            // Создаем реф на сообщения
-            const messagesRef = ref(window.rtdb, `chats/${chatId}/messages`);
-            
-            // Подписываемся (предыдущая подписка автоматически отпишется при повторном вызове)
-            onValue(messagesRef, (snapshot) => {
-                console.log('📥 onValue сообщения сработал');
-                
-                messagesDiv.innerHTML = ''; // Очищаем
-                
-                if (!snapshot.exists()) {
-                    messagesDiv.innerHTML = '<div class="message">Нет сообщений</div>';
-                    return;
-                }
-                
-                // Преобразуем объект в массив и сортируем по времени
-                const messages = [];
-                snapshot.forEach((child) => {
-                    messages.push({ id: child.key, ...child.val() });
-                });
-                
-                // Сортируем от старых к новым (для правильного отображения)
-                messages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
-                
-                // Отрисовываем
-                messages.forEach(msg => {
-                    const msgDiv = document.createElement('div');
-                    msgDiv.className = `message ${msg.senderId === window.currentMasterKey ? 'master' : 'client'}`;
-                    
-                    const time = msg.timestamp 
-                        ? new Date(msg.timestamp).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' })
-                        : '';
-                    
-                    msgDiv.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                            <span style="font-weight: bold;">${msg.senderId === window.currentMasterKey ? 'Я' : 'Клиент'}</span>
-                            <span style="font-size: 0.7rem; opacity: 0.7;">${time}</span>
-                        </div>
-                        <div>${msg.text}</div>
-                    `;
-                    
-                    messagesDiv.appendChild(msgDiv);
-                });
-                
-                // Скроллим вниз
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                
-            }, (error) => {
-                console.error('❌ Ошибка подписки на сообщения:', error);
-                messagesDiv.innerHTML = '<div class="message">Ошибка загрузки сообщений</div>';
-            });
-        };
-
-        window.sendMasterMessage = function(chatId) {
-            const input = document.getElementById('masterChatInput');
-            const text = input.value.trim();
-            
-            if (!text || !chatId) return;
-            
-            console.log('📤 Отправка сообщения:', text, 'в чат:', chatId);
-            
-            const message = {
-                senderId: window.currentMasterKey,
-                text: text,
-                timestamp: Date.now(),
-                read: false
+            const masterNames = {
+                'counters': 'Мастер 1 (сантехника)',
+                'conditioners': 'Мастер 1 (сантехника)',
+                'hobs': 'Мастер 2 (варочные панели)',
+                'washing': 'Мастер 3 (стиральные машины)',
+                'fridges': 'Мастер 3 (холодильники)',
+                'other': 'Мастер 3 (прочее)'
             };
+            document.getElementById('masterNameDisplay').textContent = masterNames[window.selectedService] || 'Мастер';
             
-            fetch(`https://creator-75dac-default-rtdb.europe-west1.firebasedatabase.app/chats/${chatId}/messages.json`, {
-    method: 'POST',
-    body: JSON.stringify(message)
-})
-            .then(r => r.json())
-            .then(() => {
-                console.log('✅ Сообщение отправлено');
-                
-                // Обновляем lastMessage
-                const lastMessage = {
-                    text: text,
-                    timestamp: Date.now(),
-                    senderId: window.currentMasterKey,
-                    read: false
-                };
-                
-                return fetch(`https://creator-75dac-default-rtdb.europe-west1.firebasedatabase.app/chats/${chatId}.json`, {
-    method: 'PATCH',
-    body: JSON.stringify({ lastMessage: lastMessage })
-});
-            })
-            .then(() => {
-                input.value = '';
-                // ВАЖНО: перезагружаем сообщения после отправки
-                window.loadMasterMessages(chatId);
-            })
-            .catch(err => {
-                console.error('❌ Ошибка отправки:', err);
-            });
-        };
-        // ===== ПОДПИСКА НА ЧЕК-БИЛДЕР (REALTIME) =====
-        window.subscribeToCheckout = function (chatId) {
-            console.log('📥 Подписка на чек-билдер чата:', chatId);
-
-            const container = document.getElementById('masterCheckoutItems');
-            const totalSpan = document.getElementById('masterTotalValue');
-
-            if (!container || !totalSpan) {
-                console.error('❌ Элементы чек-билдера не найдены');
-                return;
-            }
-
-            const checkoutRef = ref(window.rtdb, `chats/${chatId}/checkout`);
-
-            onValue(checkoutRef, (snapshot) => {
-                console.log('📥 onValue чек-билдера сработал');
-
-                const data = snapshot.val();
-                container.innerHTML = '';
-
-                if (!data || !data.items) {
-                    container.innerHTML = '<div class="empty-state">Нет услуг</div>';
-                    totalSpan.textContent = '0 ₽';
-                    return;
-                }
-
-                let total = 0;
-
-                Object.entries(data.items).forEach(([name, item]) => {
+            const dateStr = checkout.schedule?.date 
+                ? new Date(checkout.schedule.date).toLocaleDateString('ru') 
+                : 'дата не выбрана';
+            const timeStr = checkout.schedule?.time || '12:00';
+            document.getElementById('orderDateTimeDisplay').innerHTML = `📅 ${dateStr} · ⏰ ${timeStr}`;
+            
+            const orderItems = document.getElementById('orderItems');
+            orderItems.innerHTML = '';
+            
+            if (checkout.items) {
+                Object.entries(checkout.items).forEach(([name, item]) => {
                     if (item.status === 'pending' || item.status === 'approved') {
-                        total += item.price;
-
                         const div = document.createElement('div');
-                        div.className = 'checkout-item';  // ТОЛЬКО КЛАСС, БЕЗ ИНЛАЙН-СТИЛЕЙ
-
-                        const isApproved = item.status === 'approved';
-                        const isDisabled = isApproved ? 'disabled' : '';
-
-                        div.innerHTML = `
-                <div class="checkout-item-content">
-                    <input type="checkbox" 
-                        ${item.status === 'pending' ? 'checked' : ''}
-                        ${isDisabled}
-                        data-service-name="${name}"
-                        class="checkout-checkbox">
-                    <span class="checkout-item-name ${isApproved ? 'approved' : ''}">
-                        ${name}
-                    </span>
-                </div>
-                <div class="checkout-item-price-wrapper">
-                    <span class="checkout-item-price">${item.price.toLocaleString()} ₽</span>
-                </div>
-            `;
-
-                        if (!isApproved) {
-                            div.addEventListener('click', (e) => {
-                                if (e.target.tagName !== 'INPUT') {
-                                    const checkbox = div.querySelector('input[type="checkbox"]');
-                                    if (checkbox && !checkbox.disabled) {
-                                        const event = new Event('change', { bubbles: true });
-                                        checkbox.dispatchEvent(event);
-                                    }
-                                }
-                            });
-
-                            const checkbox = div.querySelector('input[type="checkbox"]');
-                            checkbox.addEventListener('change', () => {
-                                toggleMasterCheckbox(div);
-                            });
-                        }
-
-                        container.appendChild(div);
+                        div.className = 'order-item';
+                        div.innerHTML = `<span>${name}</span><span>${item.price.toLocaleString()} ₽</span>`;
+                        orderItems.appendChild(div);
                     }
                 });
+                
+                const clientRow = document.createElement('div');
+                clientRow.className = 'order-item';
+                clientRow.innerHTML = `<span>Клиент</span><span>${window.clientName}</span>`;
+                orderItems.appendChild(clientRow);
+            }
+            
+            document.getElementById('orderTotal').textContent = checkout.total?.toLocaleString() + ' ₽' || '0 ₽';
+        }
 
-                totalSpan.textContent = total.toLocaleString() + ' ₽';
+        document.getElementById('restoreChatBtn').addEventListener('click', async function() {
+    const orderNumber = document.getElementById('restoreOrderInput').value.trim();
+    
+    if (!orderNumber || orderNumber.length !== 6) {
+        alert('Введите 6-значный номер заказа');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`https://creator-75dac-default-rtdb.europe-west1.firebasedatabase.app/chats/${orderNumber}.json`);
+        const chatData = await response.json();
+        
+        if (!chatData) {
+            alert('Заказ не найден');
+            return;
+        }
+        
+        // Восстанавливаем данные
+        window.currentOrderNumber = orderNumber;
+        window.clientName = chatData.clientName;
+        window.selectedService = chatData.service;
+        
+        // Загружаем данные мастера
+        if (chatData.masterId && chatData.masterId !== 'no-master-available') {
+            const masterRef = doc(db, "masters", chatData.masterId);
+            const masterSnap = await getDoc(masterRef);
+            
+            if (masterSnap.exists()) {
+                const masterData = masterSnap.data();
+                
+                // Обновляем шапку чата
+                document.querySelector('.master-name').textContent = masterData.name || 'Мастер';
+                
+                // Специализации
+                const specTags = document.querySelector('.specialization');
+                specTags.innerHTML = '';
+                if (masterData.specializations && masterData.specializations.length) {
+                    masterData.specializations.forEach(spec => {
+                        const tag = document.createElement('span');
+                        tag.className = 'spec-tag';
+                        
+                        const icons = {
+                            'counters': '💧',
+                            'conditioners': '❄️',
+                            'hobs': '🔥',
+                            'washing': '🚰',
+                            'fridges': '❄️',
+                            'other': '🔧'
+                        };
+                        tag.textContent = (icons[spec] || '🔹') + ' ' + spec;
+                        specTags.appendChild(tag);
+                    });
+                }
+                
+                document.getElementById('debugMasterInfo').innerHTML = `Мастер: ${chatData.masterId}`;
+            }
+        }
+        
+        // Скрываем форму, открываем чат
+        document.getElementById('restoreForm').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+        switchPage('chat');
+        
+        // Загружаем сообщения
+        const messagesRef = ref(rtdb, `chats/${orderNumber}/messages`);
+        onValue(messagesRef, (snapshot) => {
+            console.log('📥 Получены сообщения:', snapshot.val());
+            
+            const messagesDiv = document.getElementById('chatMessages');
+            messagesDiv.innerHTML = '';
+            
+            if (!snapshot.exists()) {
+                messagesDiv.innerHTML = '<div class="message master">Напишите нам, мы онлайн</div>';
+                return;
+            }
+            
+            const messages = [];
+            snapshot.forEach((child) => {
+                messages.push({ id: child.key, ...child.val() });
+            });
+            
+            messages.sort((a, b) => a.timestamp - b.timestamp);
+            
+            messages.forEach(msg => {
+                const msgDiv = document.createElement('div');
+                const isClient = msg.senderId === 'client' || msg.senderId === window.clientName;
+                msgDiv.className = `message ${isClient ? 'client' : 'master'}`;
+                msgDiv.textContent = msg.text;
+                messagesDiv.appendChild(msgDiv);
+            });
+            
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        });
+        
+        // Загружаем чек-билдер
+        const checkoutRef = ref(rtdb, `chats/${orderNumber}/checkout`);
+        
+        onValue(checkoutRef, (snapshot) => {
+            const checkout = snapshot.val();
+            console.log('📥 Чек-билдер:', checkout);
+            
+            if (checkout && checkout.items) {
+                const isApproved = checkout.status === 'approved';
+                
+                document.querySelectorAll('#checkoutItems .checkout-item').forEach(item => {
+                    const name = item.querySelector('.checkout-item-name').textContent;
+                    const checkbox = item.querySelector('input[type="checkbox"]');
+                    
+                    if (checkout.items[name] && 
+                        (checkout.items[name].status === 'pending' || 
+                         checkout.items[name].status === 'approved')) {
+                        checkbox.checked = true;
+                    } else {
+                        checkbox.checked = false;
+                    }
+                    
+                    checkbox.disabled = isApproved;
+                    
+                    if (isApproved) {
+                        item.style.pointerEvents = 'none';
+                        item.style.opacity = '0.7';
+                    } else {
+                        item.style.pointerEvents = '';
+                        item.style.opacity = '';
+                    }
+                });
+                
+                updateTotal();
+                
+                let statusDiv = document.getElementById('checkoutStatus');
+                if (!statusDiv) {
+                    statusDiv = document.createElement('div');
+                    statusDiv.id = 'checkoutStatus';
+                    statusDiv.className = 'checkout-status';
+                    document.querySelector('.checkout-column').appendChild(statusDiv);
+                }
+                
+                statusDiv.textContent = isApproved ? '✅ Заказ утвержден' : '⏳ Ожидает подтверждения';
+                statusDiv.style.color = isApproved ? '#27ae60' : '#f39c12';
+                
+                const orderBtn = document.querySelector('.order-btn');
+                if (orderBtn) {
+                    orderBtn.style.display = isApproved ? 'none' : 'block';
+                }
+                
+                if (isApproved) {
+                    fillOrderPage(checkout, orderNumber);
+                }
+            }
+        });
+        
+        alert(`Чат с номером ${orderNumber} загружен`);
+        
+    } catch (error) {
+        console.error('Ошибка:', error);
+        alert('Ошибка загрузки');
+    }
+});
 
-                        // ===== НОВЫЙ БЛОК: отображение даты и времени =====
-    if (data.schedule && (data.schedule.date || data.schedule.time)) {
-        const dateDiv = document.createElement('div');
-        dateDiv.className = 'checkout-datetime';
+//         document.getElementById('restoreChatBtn').addEventListener('click', async function() {
+
+//             const orderNumber = document.getElementById('restoreOrderInput').value.trim();
+            
+//             if (!orderNumber || orderNumber.length !== 6) {
+//                 alert('Введите 6-значный номер заказа');
+//                 return;
+//             }
+            
+//             try {
+//                 const response = await fetch(`https://creator-75dac-default-rtdb.europe-west1.firebasedatabase.app/chats/${orderNumber}.json`);
+//                 const chatData = await response.json(); 
+//                 if (!chatData) {
+//                     alert('Заказ не найден');
+//                     return;
+//                 }
+                
+//                 // Восстанавливаем данные
+//                 window.currentOrderNumber = orderNumber;
+//                 window.clientName = chatData.clientName;
+//                 window.selectedService = chatData.service;
+                
+//                 // Скрываем форму, открываем чат
+//                 document.getElementById('restoreForm').style.display = 'none';
+//                 document.getElementById('overlay').style.display = 'none'; 
+//                 switchPage('chat');
+                
+//                 // Загружаем сообщения через существующую функцию
+//                 const messagesRef = ref(rtdb, `chats/${orderNumber}/messages`);
+//                 onValue(messagesRef, (snapshot) => {
+//                     console.log('📥 Получены сообщения:', snapshot.val());
+                    
+//                     // Создаём объект как в loadMessages
+//                     const messagesDiv = document.getElementById('chatMessages');
+//                     messagesDiv.innerHTML = '';
+            
+//             if (!snapshot.exists()) {
+//                 messagesDiv.innerHTML = '<div class="message master">Напишите нам, мы онлайн</div>';
+//                 return;
+//             }
+            
+//             const messages = [];
+//             snapshot.forEach((child) => {
+//                 messages.push({ id: child.key, ...child.val() });
+//             });
+            
+//             messages.sort((a, b) => a.timestamp - b.timestamp);
+            
+//             messages.forEach(msg => {
+//                 const msgDiv = document.createElement('div');
+//                 // Определяем отправителя
+//                 const isClient = msg.senderId === 'client' || msg.senderId === window.clientName;
+//                 msgDiv.className = `message ${isClient ? 'client' : 'master'}`;
+//                 msgDiv.textContent = msg.text;
+//                 messagesDiv.appendChild(msgDiv);
+//             });
+            
+//             messagesDiv.scrollTop = messagesDiv.scrollHeight;
+//         });
         
-        const dateStr = data.schedule.date 
-            ? new Date(data.schedule.date).toLocaleDateString('ru') 
-            : 'дата не выбрана';
-        const timeStr = data.schedule.time || 'время не указано';
+//         // Загружаем чек-билдер
+//         const checkoutRef = ref(rtdb, `chats/${orderNumber}/checkout`);
+
+//         onValue(checkoutRef, (snapshot) => {
+//     const checkout = snapshot.val();
+//     console.log('📥 Чек-билдер:', checkout);
+    
+//     if (checkout && checkout.items) {
+//         // Проверяем статус
+//         const isApproved = checkout.status === 'approved';
         
-        dateDiv.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
-                <span>📅</span>
-                <span style="font-weight: 500;">${dateStr}</span>
-                <span>⏰</span>
-                <span style="font-weight: 500;">${timeStr}</span>
+//         // Применяем состояние чекбоксов и блокировку
+//         document.querySelectorAll('#checkoutItems .checkout-item').forEach(item => {
+//             const name = item.querySelector('.checkout-item-name').textContent;
+//             const checkbox = item.querySelector('input[type="checkbox"]');
+            
+//             // Устанавливаем checked из базы
+//             if (checkout.items[name] && 
+//                 (checkout.items[name].status === 'pending' || 
+//                  checkout.items[name].status === 'approved')) {
+//                 checkbox.checked = true;
+//             } else {
+//                 checkbox.checked = false;
+//             }
+            
+//             // Блокируем если утверждено
+//             checkbox.disabled = isApproved;
+            
+//             // Визуально блокируем всю плашку
+//             if (isApproved) {
+//                 item.style.pointerEvents = 'none';
+//                 item.style.opacity = '0.7';
+//             } else {
+//                 item.style.pointerEvents = '';
+//                 item.style.opacity = '';
+//             }
+//         });
+        
+//         updateTotal();
+        
+//         // ПОКАЗЫВАЕМ СТАТУС
+//         let statusDiv = document.getElementById('checkoutStatus');
+//         if (!statusDiv) {
+//             statusDiv = document.createElement('div');
+//             statusDiv.id = 'checkoutStatus';
+//             statusDiv.className = 'checkout-status';
+//             document.querySelector('.checkout-column').appendChild(statusDiv);
+//         }
+        
+//         statusDiv.textContent = isApproved ? '✅ Заказ утвержден' : '⏳ Ожидает подтверждения';
+//         statusDiv.style.color = isApproved ? '#27ae60' : '#f39c12';
+        
+//         // ПРЯЧЕМ КНОПКУ, ЕСЛИ УТВЕРЖДЕНО
+//         const orderBtn = document.querySelector('.order-btn');
+//         if (orderBtn) {
+//             orderBtn.style.display = isApproved ? 'none' : 'block';
+//         }
+        
+//         // ЕСЛИ СТАТУС APPROVED — ЗАПОЛНЯЕМ СТРАНИЦУ ЗАКАЗА
+//         if (isApproved) {
+//             fillOrderPage(checkout, orderNumber);
+//         }
+//     }
+// });
+        
+// //         onValue(checkoutRef, (snapshot) => {
+// //         const checkout = snapshot.val();
+// //         console.log('📥 Чек-билдер:', checkout);
+        
+// //         if (checkout && checkout.items) {
+// //             // Проверяем статус
+// //             const isApproved = checkout.status === 'approved';
+            
+// //             // Применяем состояние чекбоксов и блокировку
+// //             document.querySelectorAll('#checkoutItems .checkout-item').forEach(item => {
+// //                 const name = item.querySelector('.checkout-item-name').textContent;
+// //                 const checkbox = item.querySelector('input[type="checkbox"]');
+                
+// //                 // Устанавливаем checked из базы
+// //                 if (checkout.items[name] && 
+// //                     (checkout.items[name].status === 'pending' || 
+// //                     checkout.items[name].status === 'approved')) {
+// //                     checkbox.checked = true;
+// //                 } else {
+// //                     checkbox.checked = false;
+// //                 }
+                
+// //                 // Блокируем если утверждено
+// //                 checkbox.disabled = isApproved;
+                
+// //                 // Визуально блокируем всю плашку
+// //                 if (isApproved) {
+// //                     item.style.pointerEvents = 'none';
+// //                     item.style.opacity = '0.7';
+// //                 } else {
+// //                     item.style.pointerEvents = '';
+// //                     item.style.opacity = '';
+// //                 }
+// //             });
+            
+// //             updateTotal();
+            
+// //             // Показываем статус
+// //             let statusDiv = document.getElementById('checkoutStatus');
+// //             if (!statusDiv) {
+// //                 statusDiv = document.createElement('div');
+// //                 statusDiv.id = 'checkoutStatus';
+// //                 statusDiv.className = 'checkout-status';
+// //                 document.querySelector('.checkout-column').appendChild(statusDiv);
+// //             }
+            
+// //             statusDiv.textContent = isApproved ? '✅ Заказ утвержден' : '⏳ Ожидает подтверждения';
+// //             statusDiv.style.color = isApproved ? '#27ae60' : '#f39c12';
+            
+// //             // Прячем кнопку "Договорились", если утверждено
+// //             const orderBtn = document.querySelector('.order-btn');
+// //             if (orderBtn) {
+// //                 orderBtn.style.display = isApproved ? 'none' : 'block';
+// //             }
+// //         }
+// // });
+
+// //         onValue(checkoutRef, (snapshot) => {
+// //             const checkout = snapshot.val();
+// //             console.log('📥 Чек-билдер:', checkout);
+            
+// //             if (checkout && checkout.items) {
+// //                 // Применяем к чек-билдеру (как раньше)
+// //                 const isApproved = checkout.status === 'approved';
+                
+// //                 document.querySelectorAll('#checkoutItems .checkout-item').forEach(item => {
+// //                     const name = item.querySelector('.checkout-item-name').textContent;
+// //                     const checkbox = item.querySelector('input[type="checkbox"]');
+                    
+// //                     if (checkout.items[name] && 
+// //                         (checkout.items[name].status === 'pending' || 
+// //                         checkout.items[name].status === 'approved')) {
+// //                         checkbox.checked = true;
+// //                     } else {
+// //                         checkbox.checked = false;
+// //                     }
+                    
+// //                     checkbox.disabled = isApproved;
+// //                     if (isApproved) {
+// //                         item.style.pointerEvents = 'none';
+// //                         item.style.opacity = '0.7';
+// //                     }
+// //                 });
+                
+// //                 updateTotal();
+                
+// //                 // ЕСЛИ СТАТУС APPROVED — ЗАПОЛНЯЕМ СТРАНИЦУ ЗАКАЗА
+// //                 if (isApproved) {
+// //                     fillOrderPage(checkout, orderNumber);
+// //                 }
+// //             }
+// //         });
+
+        
+//         alert(`Чат с номером ${orderNumber} загружен`);
+        
+//     } catch (error) {
+//         console.error('Ошибка:', error);
+//         alert('Ошибка загрузки');
+//     }
+// });
+
+        window.sendMessage = function() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    
+    // Используем currentOrderNumber вместо chatId
+    if (!text || !window.currentOrderNumber) return;
+    
+    const messagesRef = ref(rtdb, `chats/${window.currentOrderNumber}/messages`);
+    const newMsgRef = push(messagesRef);
+    
+    const message = {
+        senderId: 'client',  // Теперь просто 'client', без random ID
+        senderName: window.clientName || 'Клиент', // Имя из формы
+        text: text,
+        timestamp: Date.now(),
+        read: false
+    };
+    
+    set(newMsgRef, message).then(() => {
+        console.log('✅ Сообщение отправлено');
+        
+        // Обновляем lastMessage в самом чате
+        const chatRef = ref(rtdb, `chats/${window.currentOrderNumber}`);
+        update(chatRef, {
+            lastMessage: {
+                text: text,
+                timestamp: Date.now(),
+                senderId: 'client',
+                senderName: window.clientName || 'Клиент',
+                read: false
+            }
+        });
+    }).catch(err => {
+        console.error('❌ Ошибка отправки:', err);
+    });
+    
+    input.value = '';
+};
+
+// ===== ЧЕК-БИЛДЕР =====
+window.renderCheckout = function() {
+    const container = document.getElementById('checkoutItems');
+    container.innerHTML = '';
+    
+    // Берём шаблон под текущую услугу
+    const template = serviceTemplates[window.selectedService] || serviceTemplates['other'];
+    
+    template.forEach((service, index) => {
+        const div = document.createElement('div');
+        div.className = 'checkout-item';
+        div.setAttribute('onclick', 'toggleCheckbox(this)');
+        div.innerHTML = `
+            <input type="checkbox" ${service.default ? 'checked' : ''}>
+            <span class="checkout-item-name">${service.name}</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="checkout-item-price">${service.price.toLocaleString()} ₽</span>
+                <button class="delete-service-btn" onclick="deleteServiceItem(this)" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #e74c3c; padding: 0 4px;">🔴</button>
             </div>
         `;
-        
-        container.appendChild(dateDiv);
-    }
-
-                // Статус тоже лучше через класс
-                const statusDiv = document.createElement('div');
-                statusDiv.className = `checkout-status ${data.status}`;
-                statusDiv.textContent = data.status === 'approved' ? '✅ Чек утвержден' : '⏳ Чек в процессе обсуждения';
-                container.appendChild(statusDiv);
-
-            }, (error) => {
-                console.error('❌ Ошибка подписки на чек-билдер:', error);
-                container.innerHTML = '<div class="empty-state">Ошибка загрузки</div>';
-            });
-        };
-
-// ===== КЛИК ПО ЧЕКБОКСУ (мастер) =====
-
-window.toggleMasterCheckbox = function(element) {
-    const checkbox = element.querySelector('input[type="checkbox"]');
-    checkbox.checked = !checkbox.checked;
-    updateMasterTotal();
+        // div.innerHTML = `
+        //     <input type="checkbox" ${service.default ? 'checked' : ''}>
+        //     <span class="checkout-item-name">${service.name}</span>
+        //     <span class="checkout-item-price">${service.price.toLocaleString()} ₽</span>
+        // `;
+        container.appendChild(div);
+    });
     
-    if (window.currentChatId) {
-        saveMasterCheckoutToRTDB();
+        // Кнопка добавления услуги
+    const addBtn = document.createElement('div');
+    addBtn.className = 'add-service-btn';
+    addBtn.innerHTML = '➕ Добавить услугу';
+    addBtn.onclick = showAddServiceForm;
+    container.appendChild(addBtn);
+
+    updateTotal();
+};
+
+// window.renderCheckout = function() {
+//     const container = document.getElementById('checkoutItems');
+//     container.innerHTML = '';
+//     services.forEach((service, index) => {
+//         const div = document.createElement('div');
+//         div.className = 'checkout-item';
+//         div.setAttribute('onclick', 'toggleCheckbox(this)');
+//         div.innerHTML = `
+//             <input type="checkbox" ${index === 0 ? 'checked' : ''}>
+//             <span class="checkout-item-name">${service.name}</span>
+//             <span class="checkout-item-price">${service.price.toLocaleString()} ₽</span>
+//         `;
+//         container.appendChild(div);
+//     });
+//     updateTotal();
+// };
+
+function showAddServiceForm() {
+    const container = document.getElementById('checkoutItems');
+    
+    // Убираем кнопку добавления
+    const addBtn = document.querySelector('.add-service-btn');
+    if (addBtn) addBtn.style.display = 'none';
+    
+    // Создаём форму
+    const form = document.createElement('div');
+    form.className = 'checkout-item';
+    form.id = 'addServiceForm';
+    form.style.flexDirection = 'column';
+    form.style.alignItems = 'stretch';
+    form.style.gap = '10px';
+    form.innerHTML = `
+    <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+    <input type="text" id="newServiceName" placeholder="Название услуги" class="chat-input" style="width: 100%;">
+    <input type="number" id="newServicePrice" placeholder="Цена" class="chat-input" style="width: 100%;">
+    <div style="display: flex; gap: 8px; justify-content: space-between;">
+        <button class="form-action-btn" onclick="saveNewService()" style="flex: 1;">✓ Добавить</button>
+        <button class="form-action-btn" onclick="cancelAddService()" style="flex: 1;">✕ Отмена</button>
+    </div>
+</div>
+    `;
+    
+    container.appendChild(form);
+}
+
+window.deleteServiceItem = function(btn) {
+    const item = btn.closest('.checkout-item');
+    item.remove();
+    
+    updateTotal();
+    
+    if (window.currentOrderNumber) {
+        saveCheckoutToRTDB();
     }
 };
 
-// ===== ОБНОВЛЕНИЕ СУММЫ (мастер) =====
+window.saveNewService = function() {
+    const name = document.getElementById('newServiceName').value.trim();
+    const price = parseInt(document.getElementById('newServicePrice').value);
+    
+    if (!name || !price) {
+        alert('Введите название и цену');
+        return;
+    }
+    
+    // Добавляем в текущий шаблон (временно)
+    const newService = { name, price };
+    
+    // Вставляем в DOM перед кнопкой
+    const addBtn = document.querySelector('.add-service-btn');
+    const div = document.createElement('div');
+    div.className = 'checkout-item';
+    div.setAttribute('onclick', 'toggleCheckbox(this)');
+    div.innerHTML = `
+    <input type="checkbox">
+    <span class="checkout-item-name">${name}</span>
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="checkout-item-price">${price.toLocaleString()} ₽</span>
+        <button class="delete-service-btn" onclick="deleteServiceItem(this)" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #e74c3c; padding: 0 4px;">🔴</button>
+    </div>
+`;
+    
+    addBtn.parentNode.insertBefore(div, addBtn);
+    
+    // Удаляем форму
+    document.getElementById('addServiceForm').remove();
+    addBtn.style.display = 'flex';
+    
+    // Сохраняем в базу
+    if (window.currentOrderNumber) {
+        saveCheckoutToRTDB();
+    }
+};
 
-window.updateMasterTotal = function() {
+window.cancelAddService = function() {
+    document.getElementById('addServiceForm').remove();
+    document.querySelector('.add-service-btn').style.display = 'flex';
+};
+
+window.toggleCheckbox = function(element) {
+    const checkbox = element.querySelector('input[type="checkbox"]');
+    checkbox.checked = !checkbox.checked;
+    updateTotal();
+    
+    // Сохраняем в базу используя currentOrderNumber
+    if (window.currentOrderNumber) {
+        saveCheckoutToRTDB();
+    }
+};
+
+window.saveCheckoutToRTDB = function() {
+    
+    if (!window.currentOrderNumber) {
+        console.log('❌ Нет номера заказа');
+        return;
+    }
+    
+    const items = {};
     let total = 0;
-    document.querySelectorAll('#masterCheckoutItems .checkout-item input:checked').forEach(cb => {
+    
+    document.querySelectorAll('#checkoutItems .checkout-item').forEach(item => {
+        const checkbox = item.querySelector('input[type="checkbox"]');
+        const name = item.querySelector('.checkout-item-name').textContent;
+        const priceText = item.querySelector('.checkout-item-price').textContent;
+        const price = parseInt(priceText.replace(/[^\d]/g, ''));
+        
+        items[name] = {
+            price: price,
+            status: checkbox.checked ? 'pending' : 'removed'
+        };
+        
+        if (checkbox.checked) total += price;
+    });
+    
+    // ПОЛУЧАЕМ ДАТУ И ВРЕМЯ
+    const dateInput = document.getElementById('orderDate');
+    const timeInput = document.getElementById('orderTime');
+    
+    const checkoutData = {
+        items: items,
+        total: total,
+        status: "pending",
+        updatedAt: Date.now(),
+        // Убрали updatedBy: window.clientId
+        schedule: {
+            date: dateInput ? dateInput.value : null,
+            time: timeInput ? timeInput.value : null
+        }
+    };
+    
+    console.log('💾 Сохраняем чек-билдер:', checkoutData);
+    
+    const checkoutRef = ref(rtdb, `chats/${window.currentOrderNumber}/checkout`);
+    set(checkoutRef, checkoutData)
+        .then(() => console.log('✅ Чек-билдер сохранен'))
+        .catch(err => console.error('❌ Ошибка сохранения:', err));
+};
+
+window.updateTotal = function() {
+    let total = 0;
+    document.querySelectorAll('#checkoutItems .checkout-item input:checked').forEach(cb => {
         const priceText = cb.closest('.checkout-item').querySelector('.checkout-item-price').textContent;
         const price = parseInt(priceText.replace(/[^\d]/g, ''));
         total += price;
     });
-    document.getElementById('masterTotalValue').textContent = total.toLocaleString() + ' ₽';
+    document.getElementById('totalValue').textContent = total.toLocaleString() + ' ₽';
 };
 
-// ===== СОХРАНЕНИЕ ЧЕКА В БАЗУ (мастер) =====
-window.saveMasterCheckoutToRTDB = function() {
-    try {
-        const items = {};
-        let total = 0;
-        
-        document.querySelectorAll('#masterCheckoutItems .checkout-item').forEach(item => {
-            const checkbox = item.querySelector('input[type="checkbox"]');
-            const nameElement = item.querySelector('.checkout-item-name');
+        // ===== Мастер детали =====
+        // window.toggleMasterDetails = function() {
+        //     const details = document.getElementById('masterDetails');
+        //     const btn = event.currentTarget;
+        //     details.classList.toggle('expanded');
+        //     btn.innerHTML = details.classList.contains('expanded') 
+        //         ? '▲ Скрыть' 
+        //         : '▼ Все услуги и портфолио';
+        // };
+    
+        window.renderMasterServices = function() {
+            const container = document.querySelector('.services-list');
+            if (!container) return;
             
-            if (!nameElement) throw new Error('Не найден .checkout-item-name');
-            
-            const name = nameElement.textContent.trim();
-            const priceText = item.querySelector('.checkout-item-price').textContent;
-            const price = parseInt(priceText.replace(/[^\d]/g, ''));
-            
-            items[name] = {
-                price: price,
-                status: checkbox.checked ? 'pending' : 'removed'
-            };
-            
-            if (checkbox.checked) total += price;
-        });
-        
-        const checkoutData = {
-            items: items,
-            total: total,
-            status: "pending",
-            updatedAt: Date.now(),
-            updatedBy: window.currentMasterKey
-        };
-        
-        console.log('💾 Мастер сохраняет чек-билдер:', JSON.stringify(checkoutData));
-        
-        const checkoutRef = ref(window.rtdb, `chats/${window.currentChatId}/checkout`);
-        set(checkoutRef, checkoutData)
-            .then(() => {
-                console.log('✅ Чек-билдер сохранен мастером');
-            })
-            .catch(err => {
-                console.error('❌ Ошибка set:', err);
+            container.innerHTML = '';
+            masterServices.forEach(service => {
+                const div = document.createElement('div');
+                div.className = 'service-row';
+                div.innerHTML = `
+                    <span class="service-name">${service.name}</span>
+                    <span class="service-price">${service.price}</span>
+                `;
+                container.appendChild(div);
             });
-    } catch (err) {
-        console.error('❌ Ошибка формирования данных:', err);
-    }
-};
+        };
 
-        window.approveCheckout = function(chatId) {
-            const checkoutRef = ref(rtdb, `chats/${chatId}/checkout`);
+        window.confirmOrder = function() {
+            if (!window.currentOrderNumber) {
+                console.log('❌ Нет номера заказа');
+                alert('Ошибка: нет активного заказа');
+                return;
+            }
             
-            onValue(checkoutRef, (snapshot) => {
-                const checkout = snapshot.val();
-                if (!checkout) return;
+            console.log('✅ confirmOrder вызван, номер:', window.currentOrderNumber);
+            
+            const checkoutRef = ref(rtdb, `chats/${window.currentOrderNumber}/checkout`);
+            
+            get(checkoutRef).then(snapshot => {
+                const checkout = snapshot.val() || {};
                 
-                Object.keys(checkout.items || {}).forEach(name => {
-                    if (checkout.items[name].status === 'pending') {
-                        checkout.items[name].status = 'approved';
-                    }
-                });
-                
-                checkout.status = 'approved';
+                // Обновляем статус
+                checkout.status = "approved";
                 checkout.updatedAt = Date.now();
-                checkout.updatedBy = window.currentMasterKey;
                 
                 set(checkoutRef, checkout).then(() => {
                     console.log('✅ Чек утвержден');
                     
-                    const msgRef = push(ref(rtdb, `chats/${chatId}/messages`));
-                    set(msgRef, {
-                        senderId: window.currentMasterKey,
-                        text: '✅ Чек утвержден',
+                    // Заполняем страницу заказа
+                    document.getElementById('orderNumberDisplay').textContent = window.currentOrderNumber;
+                    document.getElementById('orderStatusDisplay').textContent = '✅ Подтвержден';
+                    
+                    // Мастер (по выбранной услуге)
+                    const masterNames = {
+                        'counters': 'Мастер 1 (сантехника)',
+                        'conditioners': 'Мастер 1 (сантехника)',
+                        'hobs': 'Мастер 2 (варочные панели)',
+                        'washing': 'Мастер 3 (стиральные машины)',
+                        'fridges': 'Мастер 3 (холодильники)',
+                        'other': 'Мастер 3 (прочее)'
+                    };
+                    const masterDisplay = masterNames[window.selectedService] || 'Мастер';
+                    document.getElementById('masterNameDisplay').textContent = masterDisplay;
+                    
+                    // Дата и время из базы
+                    const dateStr = checkout.schedule?.date 
+                        ? new Date(checkout.schedule.date).toLocaleDateString('ru') 
+                        : 'дата не выбрана';
+                    const timeStr = checkout.schedule?.time || '12:00';
+                    document.getElementById('orderDateTimeDisplay').innerHTML = `📅 ${dateStr} · ⏰ ${timeStr}`;
+                    
+                    // Услуги из базы
+                    const orderItems = document.getElementById('orderItems');
+                    orderItems.innerHTML = '';
+
+                    if (checkout.items) {
+                        Object.entries(checkout.items).forEach(([name, item]) => {
+                            if (item.status === 'pending' || item.status === 'approved') {
+                                const div = document.createElement('div');
+                                div.className = 'order-item';
+                                div.innerHTML = `<span>${name}</span><span>${item.price.toLocaleString()} ₽</span>`;
+                                orderItems.appendChild(div);
+                            }
+                        });
+                        
+                        // Добавляем имя клиента как отдельную услугу
+                        const clientRow = document.createElement('div');
+                        clientRow.className = 'order-item';
+                        clientRow.innerHTML = `<span>Клиент</span><span>${window.clientName}</span>`;
+                        orderItems.appendChild(clientRow);
+                    }
+                    
+                    document.getElementById('orderTotal').textContent = checkout.total?.toLocaleString() + ' ₽' || '0 ₽';
+                    
+                    // Сообщение в чат
+                    const messagesRef = ref(rtdb, `chats/${window.currentOrderNumber}/messages`);
+                    const newMsgRef = push(messagesRef);
+                    
+                    set(newMsgRef, {
+                        senderId: 'system',
+                        text: '✅ Заказ подтвержден',
                         timestamp: Date.now(),
                         read: false
                     });
+                    
+                    // Переходим на страницу заказа
+                    
+                    switchPage('order');
                 });
-            }, { onlyOnce: true });
-        };
-    
-        window.rejectCheckout = function(chatId) {
-            const msgRef = push(ref(rtdb, `chats/${chatId}/messages`));
-            set(msgRef, {
-                senderId: window.currentMasterKey,
-                text: '❌ Чек отклонен, нужно обсудить',
-                timestamp: Date.now(),
-                read: false
+            }).catch(err => {
+                console.error('❌ Ошибка:', err);
+                alert('Ошибка при подтверждении заказа');
             });
         };
-    
-        console.log('🚀 Приложение готово к работе');
+
+
+document.getElementById('orderDate').addEventListener('change', function() {
+    if (window.currentOrderNumber) {
+        saveCheckoutToRTDB();
+    }
+});
+
+document.getElementById('orderTime').addEventListener('change', function() {
+    if (window.currentOrderNumber) {
+        saveCheckoutToRTDB();
+    }
+});
+
+
+//         function initDateTimeListeners() {
+//             const dateInput = document.getElementById('orderDate');
+//             const timeInput = document.getElementById('orderTime');
+
+//             if (dateInput) {
+//                 dateInput.removeEventListener('change', handleScheduleChange);
+//                 dateInput.addEventListener('change', handleScheduleChange);
+//                 console.log('✅ Слушатель даты добавлен');
+//             }
+
+//             if (timeInput) {
+//                 timeInput.removeEventListener('change', handleScheduleChange);
+//                 timeInput.addEventListener('change', handleScheduleChange);
+//                 console.log('✅ Слушатель времени добавлен');
+//             }
+// }
+
+//         function handleScheduleChange() {
+//             if (window.chatId) {
+//                 console.log('📅 Изменение даты/времени, сохраняем чек');
+//                 saveCheckoutToRTDB();
+//             }
+//         }
+
+// Вызвать при загрузке страницы
+
+// window.addEventListener('load', function() {
+//     // Твой существующий код onload
+//     initDateTimeListeners(); // добавить это
+// });
+
+window.closeModal = function() {
+    document.getElementById('nameForm').style.display = 'none';
+    document.getElementById('restoreForm').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+    document.querySelector('.plates').style.display = 'flex';
+};
 
     </script>
-
+    
 </body>
+
 </html>
