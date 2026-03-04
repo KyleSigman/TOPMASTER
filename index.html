@@ -4,14 +4,2609 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>123</title>
+    <title>Кабинет мастера</title>
+
+    <style>
+        /* style.css */
+
+/* ===== НЕОМОРФИЗМ ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #d9e0ec;
+    min-height: 100vh;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    padding: 1rem;
+}
+
+        /* Красивый скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            box-shadow: 
+                inset 0.1rem 0.1rem 0.2rem rgba(255,255,255,0.9),
+                inset -0.1rem -0.1rem 0.2rem rgba(0,0,0,0.1);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 1);
+        }
+
+/* ===== ЭКРАН АВТОРИЗАЦИИ ===== */
+.auth-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #d9e0ec;
+}
+
+.auth-card {
+    background: #ecf1f8;
+    border-radius: 2rem;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 400px;
+    outline: 2px solid #a8b5cd27;
+    box-shadow: 
+        -0.7rem -0.7rem 1.2rem #ffffff7a,
+        0.9rem 0.9rem 1.8rem #a8b5cd,
+        inset -0.2rem -0.2rem 0.5rem #c0cde0,
+        inset 0.3rem 0.3rem 0.6rem #ffffff;
+}
+
+.auth-card h2 {
+    text-align: center;
+    color: #2c3e4f;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+}
+
+.auth-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    background: #eaf0fa;
+    padding: 0.3rem;
+    border-radius: 3rem;
+    box-shadow: 
+        inset 0.1rem 0.1rem 0.3rem #a8b5cd,
+        inset -0.1rem -0.1rem 0.3rem #ffffff;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 0.8rem;
+    border: none;
+    background: transparent;
+    border-radius: 2rem;
+    font-weight: 600;
+    color: #4d5f84;
+    cursor: pointer;
+    transition: all 0.1s ease;
+}
+
+.auth-tab.active {
+    background: #eaf0fa;
+    box-shadow: 
+        -0.2rem -0.2rem 0.4rem #ffffff,
+        0.2rem 0.2rem 0.4rem #a8b5cd;
+}
+
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+.form-label {
+    display: block;
+    color: #4d5f84;
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+}
+
+.form-input, .form-textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: #eaf0fa;
+    border: none;
+    border-radius: 1rem;
+    font-size: 1rem;
+    box-shadow: 
+        inset 0.1rem 0.1rem 0.3rem #a8b5cd,
+        inset -0.1rem -0.1rem 0.3rem #ffffff;
+    outline: none;
+    color: #2c3e4f;
+}
+
+.form-textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.auth-btn {
+    width: 100%;
+    background: #4d5f84;
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 
+        0.3rem 0.3rem 0.6rem #a8b5cd,
+        -0.2rem -0.2rem 0.4rem #ffffff;
+    transition: all 0.1s ease;
+    margin-top: 1rem;
+}
+
+.auth-btn:hover {
+    transform: translateY(-0.2rem);
+}
+
+.auth-btn:active {
+    transform: translateY(0.1rem);
+    box-shadow: 
+        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
+        inset -0.2rem -0.2rem 0.4rem #ffffff;
+}
+
+.auth-error {
+    color: #e74c3c;
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+/* ===== КАБИНЕТ ===== */
+.cabinet {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.header {
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    background: #15572400;
+    padding-right: 10px;
+    right: 0;
+}
+
+.header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e4f;
+    text-shadow: 0.2rem 0.2rem 0.4rem #bac4d4;
+}
+
+.logout-btn {
+    position: absolute;
+    background: #eaf0fa;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    color: #4d5f84;
+    cursor: pointer;
+    box-shadow: 
+        -0.3rem -0.3rem 0.6rem #ffffff,
+        0.4rem 0.4rem 0.8rem #a8b5cd;
+    transition: all 0.1s ease;
+}
+
+.logout-btn:hover {
+    transform: translateY(-0.2rem);
+}
+
+.logout-btn:active {
+    transform: translateY(0.1rem);
+    box-shadow: 
+        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
+        inset -0.2rem -0.2rem 0.4rem #ffffff;
+}
+
+/* ===== ПРОФИЛЬ МАСТЕРА ===== */
+.master-profile {
+    background: #eaf0fa;
+    border-radius: 2rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 
+        -0.7rem -0.7rem 1.2rem #ffffff7a,
+        0.9rem 0.9rem 1.8rem #a8b5cd;
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.master-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #a0c0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: white;
+    box-shadow: 
+        0.3rem 0.3rem 0.6rem #a8b5cd,
+        -0.2rem -0.2rem 0.4rem #ffffff;
+}
+
+.master-info {
+    flex: 1;
+}
+
+.master-name-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.master-name {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #2c3e4f;
+}
+
+.rating {
+    background: #d0dbe8;
+    padding: 0.3rem 0.8rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    color: #2c3e4f;
+    font-size: 0.9rem;
+    box-shadow: 
+        inset 0.1rem 0.1rem 0.2rem #a8b5cd,
+        inset -0.1rem -0.1rem 0.2rem #ffffff;
+}
+
+.status {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.specialization {
+    color: #4d5f84;
+}
+
+/* ===== ВКЛАДКИ ===== */
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border: 2px dashed #4d5f8415;
+    /* background: #eaf0fa; */
+    padding: 0.5rem;
+    border-radius: 1.5rem;
+    /* box-shadow: 
+        inset 0.1rem 0.1rem 0.3rem #a8b5cd,
+        inset -0.1rem -0.1rem 0.3rem #ffffff; */
+    overflow-x: auto;
+}
+
+.tab {
+    flex: 1;
+    min-width: 100px;
+    padding: 1rem;
+    border: none;
+    background: transparent;
+    border-radius: 3rem;
+    font-weight: 600;
+    color: #4d5f84;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    white-space: nowrap;
+}
+
+.tab.active {
+    background: #eaf0fa;
+    box-shadow: 
+        -0.2rem -0.2rem 0.4rem #ffffff,
+        0.2rem 0.2rem 0.4rem #a8b5cd;
+    color: #2c3e4f;
+}
+
+/* ===== КОНТЕНТ ===== */
+.content-panel {
+    background: transparent;  /* прозрачный - виден фон body */
+    padding: 0;               /* убираем отступы */
+    box-shadow: none;         /* убираем объем */
+    border-radius: 0;         /* убираем скругление */
+}
+
+.loading {
+    text-align: center;
+    color: #8a9bb8;
+    padding: 2rem;
+}
+
+.empty-state {
+    text-align: center;
+    color: #8a9bb8;
+    padding: 2rem;
+}
+
+/* ===== ПРАЙС ===== */
+.price-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.price-header h2 {
+    color: #2c3e4f;
+    font-size: 1.3rem;
+}
+
+.add-category-btn {
+    background: #eaf0fa;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    color: #4d5f84;
+    cursor: pointer;
+    box-shadow: 
+        -0.2rem -0.2rem 0.4rem #ffffff,
+        0.2rem 0.2rem 0.4rem #a8b5cd;
+}
+
+.service-category {
+    margin-bottom: 2rem;
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    /* border-bottom: 2px solid #d0dbe8; */
+}
+
+.category-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #2c3e4f;
+}
+
+.category-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-btn {
+    background: #eaf0fa;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 
+        -0.2rem -0.2rem 0.3rem #ffffff,
+        0.2rem 0.2rem 0.3rem #a8b5cd;
+    color: #4d5f84;
+}
+
+.service-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px dashed #d0dbe8;
+}
+
+.service-item:last-child {
+    border-bottom: none;
+}
+
+.service-name {
+    color: #4d5f84;
+}
+
+.service-price {
+    font-weight: 700;
+    color: #2c3e4f;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ===== КАЛЕНДАРЬ ===== */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.nav-btn {
+    background: #eaf0fa;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 
+        -0.2rem -0.2rem 0.4rem #ffffff,
+        0.2rem 0.2rem 0.4rem #a8b5cd;
+    color: #4d5f84;
+}
+
+.month-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2c3e4f;
+}
+
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    font-weight: 600;
+    color: #4d5f84;
+    padding: 0.5rem 0;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    background: #eaf0fa;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 
+        -0.2rem -0.2rem 0.4rem #ffffff,
+        0.2rem 0.2rem 0.4rem #a8b5cd;
+    transition: all 0.1s ease;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e4f;
+}
+
+.calendar-day:hover {
+    transform: translateY(-0.2rem);
+}
+
+.calendar-day.active {
+    box-shadow: 
+        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
+        inset -0.2rem -0.2rem 0.4rem #ffffff;
+}
+
+.day-details {
+    background: #eaf0fa;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    box-shadow: 
+        inset 0.1rem 0.1rem 0.3rem #a8b5cd,
+        inset -0.1rem -0.1rem 0.3rem #ffffff;
+}
+
+.selected-date {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #2c3e4f;
+    margin-bottom: 1rem;
+}
+
+.slots-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.slot-card {
+    background: #eaf0fa;
+    border-radius: 1rem;
+    padding: 1rem;
+    border: 2px dashed rgba(136, 150, 165, 0.27);
+    /* box-shadow: 
+        -0.2rem -0.2rem 0.4rem #ffffff,
+        0.2rem 0.2rem 0.4rem #a8b5cd; */
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.slot-time {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2c3e4f;
+    min-width: 60px;
+}
+
+.slot-info {
+    flex: 1;
+    min-width: 150px;
+}
+
+.slot-title {
+    font-weight: 600;
+    color: #2c3e4f;
+    margin-bottom: 0.2rem;
+}
+
+.slot-subtitle {
+    font-size: 0.85rem;
+    color: #4d5f84;
+}
+
+.slot-status {
+    padding: 0.3rem 0.8rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status-busy {
+    background: #e74c3c20;
+    color: #c0392b;
+}
+
+.status-free {
+    background: #2ecc7120;
+    color: #27ae60;
+}
+
+.slot-actions {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.slot-btn {
+    background: #eaf0fa;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 
+        -0.1rem -0.1rem 0.2rem #ffffff,
+        0.1rem 0.1rem 0.2rem #a8b5cd;
+    color: #4d5f84;
+}
+
+/* ===== ЧАТЫ ===== */
+.chat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.chat-item {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 10px;
+    margin-bottom: 3px;
+    border-radius: 1.5rem;
+    background: #eaf0fa;
+    box-shadow: 
+        -0.2rem -0.2rem 0.4rem #ffffff,
+        0.2rem 0.2rem 0.4rem #a8b5cd;
+    cursor: pointer;
+    transition: all 0.1s ease;
+}
+
+.chat-item:hover {
+    transform: translateY(-0.2rem);
+}
+
+.chat-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #a0c0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.chat-info {
+    flex: 1;
+}
+
+.chat-name-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.2rem;
+}
+
+.chat-name {
+    font-weight: 700;
+    color: #2c3e4f;
+}
+
+.chat-time {
+    font-size: 0.8rem;
+    color: #8a9bb8;
+}
+
+.chat-preview {
+    font-size: 0.9rem;
+    color: #4d5f84;
+    display: flex;
+    justify-content: space-between;
+}
+
+.unread-badge {
+    background: #4d5f84;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* ===== ПРОФИЛЬ (редактирование) ===== */
+.profile-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.save-profile-btn {
+    width: 100%;
+    background: #4d5f84;
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 
+        0.3rem 0.3rem 0.6rem #a8b5cd,
+        -0.2rem -0.2rem 0.4rem #ffffff;
+    margin-top: 1rem;
+}
+
+/* ===== АДАПТИВ ===== */
+@media (max-width: 600px) {
+    .master-profile {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .master-name-row {
+        justify-content: center;
+    }
+    
+    .tabs {
+    margin: 1rem 1rem 2rem 1rem;  /* добавить отступы */
+        flex-wrap: wrap;
+    }
+    
+    .tab {
+        min-width: calc(50% - 0.5rem);
+    }
+    
+    .slot-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .slot-actions {
+        align-self: flex-end;
+    }
+
+}
+
+    /* ===== СТИЛИ ДЛЯ ПРАЙС-БИЛДЕРА (неоморфные инпуты) ===== */
+
+/* Поля ввода названия категории */
+.category-title input {
+    background: #eaf0fa;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #2c3e4f;
+    /* box-shadow: 
+        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
+        inset -0.2rem -0.2rem 0.4rem #ffffff; */
+    outline: none;
+    width: auto;
+    min-width: 200px;
+}
+
+/* Поле ввода названия услуги */
+.service-name input {
+    background: #eaf0fa;
+    border: none;
+    padding: 0.4rem 1rem;
+    border-radius: 2rem;
+    font-size: 1rem;
+    color: #4d5f84;
+    /* box-shadow: 
+        inset 0.1rem 0.1rem 0.2rem #a8b5cd,
+        inset -0.1rem -0.1rem 0.2rem #ffffff; */
+    outline: none;
+    width: 200px;
+}
+
+/* Поле ввода цены */
+.service-price input {
+    background: #eaf0fa;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c3e4f;
+    text-align: right;
+    /* box-shadow: 
+        inset 0.1rem 0.1rem 0.2rem #a8b5cd,
+        inset -0.1rem -0.1rem 0.2rem #ffffff; */
+    outline: none;
+    width: 100px;
+}
+
+/* Убираем стрелки у number input */
+.service-price input[type=number]::-webkit-inner-spin-button,
+.service-price input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.service-price input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* Кнопки действий (редактировать/удалить) */
+.action-btn {
+    background: #eaf0fa;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 
+        -0.2rem -0.2rem 0.4rem #ffffff,
+        0.2rem 0.2rem 0.4rem #a8b5cd;
+    color: #4d5f84;
+    transition: all 0.1s ease;
+}
+
+.action-btn:active {
+    box-shadow: 
+        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
+        inset -0.2rem -0.2rem 0.4rem #ffffff;
+}
+
+/* Кнопка добавления услуги */
+.add-service-btn {
+    background: #eaf0fa;
+    border: 1px dashed #4d5f84;
+    padding: 0.8rem 1.5rem;
+    border-radius: 3rem;
+    font-weight: 500;
+    color: #4d5f84;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 0.8rem;
+
+}
+.add-service-btn:hover {
+    border: 1px dashed #4d5f8400;
+    /* Мягкий объем как у клиентских плашек */
+    box-shadow: 
+        -0.4rem -0.4rem 0.8rem #ffffff34,
+        0.5rem 0.5rem 1.2rem #a8b5cd,
+        inset -0.1rem -0.1rem 0.3rem #c0cde0,
+        inset 0.2rem 0.2rem 0.4rem #ffffff;
+    
+    transition: all 0.1s ease;
+
+}
+
+
+.add-service-btn:active {
+    box-shadow: 
+        -0.2rem -0.2rem 0.4rem #ffffff,
+        0.3rem 0.3rem 0.8rem #a8b5cd,
+        inset 0.2rem 0.2rem 0.5rem #a8b5cd,
+        inset -0.2rem -0.2rem 0.4rem #ffffff;
+}
+
+
+.add-service-btn:active {
+    box-shadow: 
+        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
+        inset -0.2rem -0.2rem 0.4rem #ffffff;
+}
+
+/* Кнопка добавления категории */
+.add-category-btn {
+    background: #eaf0fa;
+    border: 2px dashed #a8b5cd;
+    padding: 1rem;
+    border-radius: 3rem;
+    font-weight: 600;
+    color: #4d5f84;
+    cursor: pointer;
+    box-shadow: 
+        -0.3rem -0.3rem 0.6rem #ffffff,
+        0.3rem 0.3rem 0.6rem #a8b5cd;
+    width: 100%;
+    margin-top: 1rem;
+    transition: all 0.1s ease;
+}
+
+.add-category-btn:active {
+    box-shadow: 
+        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
+        inset -0.2rem -0.2rem 0.4rem #ffffff;
+}
+
+/* Категория (карточка) */
+.service-category {
+    background: #eaf0fa;
+    border-radius: 2rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    box-shadow: 
+        -0.5rem -0.5rem 1rem #ffffff,
+        0.5rem 0.5rem 1rem #a8b5cd;
+    overflow: hidden;
+}
+
+/* Заголовок категории */
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 1rem;
+}
+
+/* Список услуг внутри категории */
+.services-list {
+    padding: 0.5rem;
+    border-radius: 1rem;
+    background: #eaf0fa;
+    /* box-shadow: 
+        inset 0.1rem 0.1rem 0.3rem #a8b5cd,
+        inset -0.1rem -0.1rem 0.3rem #ffffff; */
+    margin-top: 0.5rem;
+}
+    </style>
+
+<style>
+    /* ===== СТИЛИ ДЛЯ ЧАТА МАСТЕРА (неоморфизм) ===== */
+/* Активный чат */
+.active-chat {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+/* Колонка чата */
+.chat-column {
+    flex: 1;
+    background: transparent; /* фон родителя */
+    padding: 0; /* убираем внутренние отступы */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.checkout-column {
+    flex: 1;
+    background: transparent; /* фон родителя */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+/* Заголовок чата */
+.chat-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    /* margin-bottom: 1.5rem; */
+}
+
+.back-btn {
+    background: #eaf0fa;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 
+        -0.2rem -0.2rem 0.4rem #ffffff,
+        0.2rem 0.2rem 0.4rem #a8b5cd;
+    color: #4d5f84;
+    transition: all 0.1s ease;
+}
+
+.back-btn:active {
+    box-shadow: 
+        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
+        inset -0.2rem -0.2rem 0.4rem #ffffff;
+}
+
+.chat-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e4f;
+}
+
+/* Область сообщений */
+.chat-messages {
+    background: #f0f5fa; 
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    height: 350px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    box-shadow: 
+        inset 0.2rem 0.2rem 0.5rem #a8b5cd,
+        inset -0.2rem -0.2rem 0.5rem #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Сообщения */
+.message {
+    max-width: 85%;
+    padding: 0.8rem 1.2rem;
+    border-radius: 1.5rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    position: relative;
+}
+
+.message.master {
+    background: #8fb0d0;
+    color: white;
+    align-self: flex-end;
+    box-shadow: 
+        0.3rem 0.3rem 0.6rem #a8b5cd,
+        -0.1rem -0.1rem 0.2rem #ffffff;
+    border-bottom-right-radius: 0.3rem;
+}
+
+.message.client {
+    background: #ffffff;
+    color: #2c3e4f;
+    align-self: flex-start;
+    box-shadow: 
+        0.3rem 0.3rem 0.6rem #a8b5cd,
+        -0.1rem -0.1rem 0.2rem #ffffff;
+    border-bottom-left-radius: 0.3rem;
+}
+
+/* Инпут для сообщений */
+.chat-input-wrapper {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.chat-input {
+    flex: 1;
+    background: #eaeef5;
+    border: none;
+    border-radius: 3rem;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    box-shadow: 
+        inset 0.2rem 0.2rem 0.5rem #a8b5cd,
+        inset -0.2rem -0.2rem 0.5rem #ffffff;
+    outline: none;
+    color: #2c3e4f;
+}
+
+.chat-input::placeholder {
+    color: #8a9bb8;
+    opacity: 0.7;
+}
+
+.send-btn {
+    background: #eaf0fa;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 
+        -0.2rem -0.2rem 0.4rem #ffffff,
+        0.2rem 0.2rem 0.4rem #a8b5cd;
+    color: #4d5f84;
+    transition: all 0.1s ease;
+}
+
+.send-btn:active {
+    box-shadow: 
+        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
+        inset -0.2rem -0.2rem 0.4rem #ffffff;
+}
+/* Колонка чек-билдера */
+.checkout-column {
+    flex: 1;
+}
+
+/* Заголовок чек-билдера */
+.checkout-column .chat-title {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e4f;
+}
+
+/* Контейнер услуг (впадина) */
+.checkout-items {
+    background: #f0f5fa;  
+    border-radius: 1.5rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    height: auto;
+    /* max-height: 300px; */
+    overflow-y: auto;
+    box-shadow: 
+        inset 0.2rem 0.2rem 0.5rem #a8b5cd,
+        inset -0.2rem -0.2rem 0.5rem #ffffff;
+}
+
+/* Плашка услуги (выпуклая) */
+.checkout-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.2rem;
+    margin: 0.5rem 0;
+    background: #eaf0fa;
+    border-radius: 1.5rem;
+    box-shadow: 
+        -0.2rem -0.2rem 0.4rem #ffffff,
+        0.2rem 0.2rem 0.4rem #a8b5cd;
+    transition: all 0.1s ease;
+    cursor: pointer;
+}
+
+.checkout-item:active {
+    box-shadow: 
+        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
+        inset -0.2rem -0.2rem 0.4rem #ffffff;
+}
+
+/* Контейнер левой части (чекбокс + название) */
+.checkout-item-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;  /* чуть больше воздуха */
+}
+
+/* Чекбокс */
+.checkout-checkbox {
+    width: 1.2rem;
+    height: 1.2rem;
+    accent-color: #8fb0d0;
+    cursor: pointer;
+}
+
+.checkout-checkbox:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Название услуги */
+.checkout-item-name {
+    color: #4d5f84;
+    font-weight: 500;
+}
+
+.checkout-item-name.approved {
+    font-weight: bold;
+}
+
+/* Контейнер правой части (цена + возможно статус) */
+.checkout-item-price-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Цена */
+.checkout-item-price {
+    font-weight: 700;
+    color: #2c3e4f;
+}
+
+/* Строка итого */
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: #eaf0fa;
+    border-radius: 1.5rem;
+    margin: 1rem 0;
+    box-shadow: 
+        -0.2rem -0.2rem 0.4rem #ffffff,
+        0.2rem 0.2rem 0.4rem #a8b5cd;
+}
+
+/* Статус чека */
+.checkout-status {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    border-radius: 1rem;
+    text-align: center;
+    font-weight: bold;
+}
+
+.checkout-status.approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.checkout-status.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+#activeChatContainer.active-chat {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+/* Строка итого */
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: #eaf0fa;
+    border-radius: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 
+        -0.2rem -0.2rem 0.4rem #ffffff,
+        0.2rem 0.2rem 0.4rem #a8b5cd;
+}
+
+.total-label {
+    font-weight: 600;
+    color: #4d5f84;
+    font-size: 1.1rem;
+}
+
+.total-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2c3e4f;
+}
+/* Кнопки утверждения/отклонения */
+.checkout-column .order-btn {
+    width: 100%;
+    background: #8fb0d0;
+    color: white;
+    border: none;
+    border-radius: 3rem;
+    padding: 1rem;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 
+        0.3rem 0.3rem 0.6rem #a8b5cd,
+        -0.2rem -0.2rem 0.4rem #ffffff;
+    transition: all 0.1s ease;
+}
+
+.checkout-column .order-btn:active {
+    transform: translateY(0.1rem);
+    box-shadow: 
+        inset 0.2rem 0.2rem 0.4rem #a8b5cd,
+        inset -0.2rem -0.2rem 0.4rem #ffffff;
+}
+
+.checkout-column .order-btn:first-of-type {
+    background: #4d5f84;
+}
+
+.checkout-column .order-btn:last-of-type {
+    background: #e74c3c;
+}
+/* Контейнер с двумя кнопками */
+.checkout-column div[style*="display: flex"] {
+    gap: 0.5rem;
+}
+/* Статус чека */
+.checkout-column .empty-state {
+    text-align: center;
+    color: #8a9bb8;
+    padding: 2rem;
+}
+/* Скроллбар для чата */
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: rgba(74, 111, 140, 0.3);
+    border-radius: 3px;
+    box-shadow: 
+        inset 0.1rem 0.1rem 0.2rem rgba(255,255,255,0.5),
+        inset -0.1rem -0.1rem 0.2rem rgba(0,0,0,0.1);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .active-chat {
+        flex-direction: column;
+    }
+    
+    .chat-column, .checkout-column {
+        width: 100%;
+    }
+    
+    .message {
+        max-width: 95%;
+    }
+}
+</style>
+
+<style>
+    .checkout-datetime {
+    margin: 1rem 0;
+    padding: 0.8rem;
+    background: #eaf0fa;
+    border-radius: 1rem;
+    text-align: center;
+    color: #2c3e4f;
+    font-weight: 500;
+    box-shadow: 
+        inset 0.1rem 0.1rem 0.3rem #a8b5cd,
+        inset -0.1rem -0.1rem 0.3rem #ffffff;
+}
+</style>
 
 </head>
 
 <body>
+    <!-- Экран входа по ключу -->
+    <div class="auth-screen" id="authScreen">
+        <div class="auth-card">
+            <h2 style="margin-bottom: 1.5rem;">Вход</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Ваш мастер-ключ</label>
+                <input type="text" class="form-input" id="masterKey" placeholder="Например: cool-master-123">
+            </div>
+            
+            <button class="auth-btn" id="loginBtn">Войти</button>
+            
+            <div style="text-align: center; margin: 1rem 0; color: #999;">или</div>
+            
+            <button class="auth-btn" id="generateBtn" style="background: #6c757d;">Сгенерировать новый ключ</button>
+            
+            <div id="authError" style="color: red; margin-top: 1rem; text-align: center;"></div>
+        </div>
+    </div>
+
+    <!-- Кабинет мастера (скрыт) -->
+    <div class="cabinet" id="cabinet" style="display: none;">
+        <div class="header">
+            <!-- <h1>🔧 КАБИНЕТ МАСТЕРА</h1> -->
+            <button class="auth-btn" id="logoutBtn" style="width: auto; padding: 0.5rem 1.5rem;">Выйти</button>
+        </div>
+
+        <!-- Профиль мастера -->
+        <div class="master-profile">
+            <div style="width: 60px; height: 60px; background: #a6c2de; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">👤</div>
+            <div>
+                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.3rem;">
+                    <span class="master-name" id="masterName" style="font-size: 1.5rem; font-weight: bold;">Загрузка...</span>
+                    <!-- <span class="rating" id="masterRating">★ 0.0</span> -->
+                    <span class="status" id="masterStatus">🔴 Офлайн</span>
+                </div>
+                <div class="specialization" id="masterSpec"></div>
+                <div class="master-key" id="masterKeyDisplay" style="font-size: 0.8rem; color: #999; margin-top: 0.3rem;"></div>
+
+                <!-- Чекбоксы специализации -->
+<div style="margin-top: 1rem; padding-top: 0.5rem; border-top: 1px dashed #d0dbe8;">
+    <div style="font-size: 0.9rem; color: #4d5f84; margin-bottom: 0.5rem;">Выберите услуги:</div>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+        <label style="display: flex; align-items: center; gap: 0.3rem; background: #eaf0fa; padding: 0.3rem 0.8rem; border-radius: 2rem;">
+            <input type="checkbox" value="counters" class="service-checkbox"> 💧 Счётчики
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.3rem; background: #eaf0fa; padding: 0.3rem 0.8rem; border-radius: 2rem;">
+            <input type="checkbox" value="conditioners" class="service-checkbox"> ❄️ Кондиционеры
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.3rem; background: #eaf0fa; padding: 0.3rem 0.8rem; border-radius: 2rem;">
+            <input type="checkbox" value="hobs" class="service-checkbox"> 🔥 Варочные
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.3rem; background: #eaf0fa; padding: 0.3rem 0.8rem; border-radius: 2rem;">
+            <input type="checkbox" value="washing" class="service-checkbox"> 🚰 Стиральные
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.3rem; background: #eaf0fa; padding: 0.3rem 0.8rem; border-radius: 2rem;">
+            <input type="checkbox" value="fridges" class="service-checkbox"> ❄️ Холодильники
+        </label>
+        <label style="display: flex; align-items: center; gap: 0.3rem; background: #eaf0fa; padding: 0.3rem 0.8rem; border-radius: 2rem;">
+            <input type="checkbox" value="other" class="service-checkbox"> 🔧 Прочее
+        </label>
+    </div>
+</div>
+
+            </div>
+        </div>
+
+        <!-- Вкладки -->
+        <div class="tabs">
+            <button class="tab active" data-tab="price">💰 ПРАЙС</button>
+            <button class="tab" data-tab="calendar">📅 ГРАФИК</button>
+            <button class="tab" data-tab="chats">💬 ЧАТЫ</button>
+            <button class="tab" data-tab="profile">👤 ПРОФИЛЬ</button>
+        </div>
+
+        <!-- Контент -->
+        <div class="content-panel" id="contentPanel">
+            <!-- ПРАЙС -->
+            <div class="price-tab">
+                <div class="price-header">
+                    <h2>Мои услуги</h2>
+                </div>
+                <div id="servicesList" class="services-list-container">
+                    <div class="loading">Загрузка услуг...</div>
+                </div>
+                <button class="add-category-btn" id="addCategoryBtn">+ Добавить категорию</button>
+            </div>
+
+            <!-- КАЛЕНДАРЬ -->
+            <div class="calendar-tab" style="display: none;">
+                <div class="calendar-header">
+                    <button class="nav-btn" id="prevMonthBtn">←</button>
+                    <div class="month-title" id="monthTitle">Март 2025</div>
+                    <button class="nav-btn" id="nextMonthBtn">→</button>
+                </div>
+                <div class="weekdays">
+                    <span>ПН</span><span>ВТ</span><span>СР</span><span>ЧТ</span>
+                    <span>ПТ</span><span>СБ</span><span>ВС</span>
+                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+                <div class="day-details" id="dayDetails"></div>
+            </div>
+
+            <!-- ЧАТЫ -->
+            <div class="chats-tab" style="display: none;">
+                <div class="chat-list" id="chatList">
+                    <div class="loading">Загрузка чатов...</div>
+                </div>
+            </div>
+
+            <!-- ПРОФИЛЬ -->
+            <div class="profile-tab" style="display: none;">
+                <div style="max-width: 500px; margin: 0 auto;">
+                    <div class="form-group">
+                        <label>Имя</label>
+                        <input type="text" class="form-input" id="profileName">
+                    </div>
+                    <div class="form-group">
+                        <label>Специализация (через запятую)</label>
+                        <input type="text" class="form-input" id="profileSpec">
+                    </div>
+                    <div class="form-group">
+                        <label>О себе</label>
+                        <textarea class="form-input" id="profileAbout" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Телефон</label>
+                        <input type="text" class="form-input" id="profilePhone">
+                    </div>
+                    <div class="form-group">
+                        <label>Город</label>
+                        <input type="text" class="form-input" id="profileCity">
+                    </div>
+                    <div class="form-group">
+                        <label>Районы выезда</label>
+                        <input type="text" class="form-input" id="profileArea">
+                    </div>
+                    <button class="auth-btn" id="saveProfileBtn">Сохранить изменения</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ТЕСТОВЫЙ БЛОК ДЛЯ ПРОВЕРКИ ONVALUE -->
+        <!-- <div style="background: #ffeb3b; padding: 1rem; margin-bottom: 2rem; border-radius: 1rem;">
+            <h3>🔬 ТЕСТ REALTIME (client_3ujoq6zq6)</h3>
+            <div id="testMessages" style="background: white; padding: 0.5rem; min-height: 100px; max-height: 150px; overflow-y: auto; font-size: 12px;">
+                Загрузка...
+            </div>
+        </div> -->
+
+    </div>
+
+    <script type="module">
+        // ===== Firebase =====
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, getDocs, addDoc, deleteDoc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getDatabase, ref, query as rtdbQuery, orderByChild, equalTo, onValue, off, push, set, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
     
+        // Конфиг Firebase
+        const firebaseConfig = {
+    apiKey: "AIzaSyCVr3ZztynpNzkeFY3aLKFN777oPXXXXXX",
+    authDomain: "inspector-24f9b.firebaseapp.com",
+    projectId: "inspector-24f9b",
+    storageBucket: "inspector-24f9b.firebasestorage.app",
+    messagingSenderId: "590955045913",
+    appId: "1:590955045913:web:164311eb98caeca7643688"
+};
+
+// И главное — databaseURL
+    
+        console.log("🟢 Инициализация Firebase...");
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const rtdb = getDatabase(app, "https://creator-75dac-default-rtdb.europe-west1.firebasedatabase.app/");
+        // const rtdb = getDatabase(app);
+        window.rtdb = rtdb; 
+        console.log("✅ Firebase готов");
+    
+        // ===== Элементы DOM =====
+        const authScreen = document.getElementById('authScreen');
+        const cabinet = document.getElementById('cabinet');
+        const masterKeyInput = document.getElementById('masterKey');
+        const loginBtn = document.getElementById('loginBtn');
+        const generateBtn = document.getElementById('generateBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const authError = document.getElementById('authError');
+        const masterKeyDisplay = document.getElementById('masterKeyDisplay');
+        
+        // Элементы календаря
+        const monthTitle = document.getElementById('monthTitle');
+        const calendarGrid = document.getElementById('calendarGrid');
+        const prevMonthBtn = document.getElementById('prevMonthBtn');
+        const nextMonthBtn = document.getElementById('nextMonthBtn');
+        const dayDetails = document.getElementById('dayDetails');
+        
+        // Элементы чатов
+        const chatList = document.getElementById('chatList');
+    
+        // Переменные состояния
+        let currentMasterKey = null;
+        let currentYear = new Date().getFullYear();
+        let currentMonth = new Date().getMonth() + 1;
+        let currentOrders = {};
+    
+        // ===== Утилиты =====
+        const generateKey = () => {
+            const adjectives = ['red', 'blue', 'green', 'yellow', 'big', 'small', 'fast', 'slow', 'cool', 'nice'];
+            const nouns = ['master', 'wizard', 'ninja', 'guru', 'hero', 'wolf', 'eagle', 'lion', 'bear', 'fox'];
+            const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+            const noun = nouns[Math.floor(Math.random() * nouns.length)];
+            const num = Math.floor(Math.random() * 1000);
+            console.log(`🆕 Сгенерирован новый ключ: ${adj}-${noun}-${num}`);
+            return `${adj}-${noun}-${num}`;
+        };
+    
+        // ===== Загрузка профиля мастера =====
+        const loadMasterProfile = async (masterKey) => {
+            console.log(`📥 Загрузка профиля для ключа: ${masterKey}`);
+            
+            try {
+                const masterRef = doc(db, "masters", masterKey);
+                const masterSnap = await getDoc(masterRef);
+                
+                if (masterSnap.exists()) {
+                    const data = masterSnap.data();
+                    console.log("✅ Профиль загружен:", data);
+
+                        // Проставляем чекбоксы специализации
+    if (data.specializations && data.specializations.length) {
+        document.querySelectorAll('.service-checkbox').forEach(cb => cb.checked = false);
+        data.specializations.forEach(spec => {
+            const checkbox = document.querySelector(`.service-checkbox[value="${spec}"]`);
+            if (checkbox) checkbox.checked = true;
+        });
+    }
+                    
+                    document.getElementById('masterName').textContent = data.name || 'Имя не указано';
+                    // document.getElementById('masterRating').textContent = `★ ${data.rating || 0}`;
+                    document.getElementById('masterStatus').textContent = data.status === 'online' ? '💚 Онлайн' : '🔴 Офлайн';
+                    document.getElementById('masterSpec').textContent = data.specializations?.join(' · ') || 'Специализация не указана';
+                    masterKeyDisplay.textContent = `Ключ: ${masterKey}`;
+                    
+                    document.getElementById('profileName').value = data.name || '';
+                    document.getElementById('profileSpec').value = data.specializations?.join(', ') || '';
+                    document.getElementById('profileAbout').value = data.about || '';
+                    document.getElementById('profilePhone').value = data.phone || '';
+                    document.getElementById('profileCity').value = data.city || '';
+                    document.getElementById('profileArea').value = data.serviceArea?.join(', ') || '';
+                    
+                    await updateDoc(masterRef, { status: 'online', updatedAt: new Date().toISOString() });
+                    
+                } else {
+                    console.log("🆕 Новый мастер, создаем профиль...");
+                    
+                    const newMaster = {
+                        name: "Новый мастер",
+                        rating: 0,
+                        status: "online",
+                        specializations: [],
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    };
+                    
+                    await setDoc(masterRef, newMaster);
+                    console.log("✅ Новый профиль создан");
+                    
+                    await loadMasterProfile(masterKey);
+                }
+            } catch (error) {
+                console.error("❌ Ошибка загрузки профиля:", error);
+                authError.textContent = 'Ошибка загрузки. Проверьте консоль.';
+            }
+        };
+    
+        document.querySelectorAll('.service-checkbox').forEach(cb => {
+            cb.addEventListener('change', function() {
+                const selected = Array.from(document.querySelectorAll('.service-checkbox:checked'))
+                    .map(c => c.value);
+                
+                // Сохраняем в профиль мастера
+                if (window.currentMasterKey) {
+                    const masterRef = doc(db, "masters", window.currentMasterKey);
+                    updateDoc(masterRef, {
+                        specializations: selected,
+                        updatedAt: new Date().toISOString()
+                    });
+                }
+            });
+        });
+
+        // ===== Загрузка услуг =====
+        const loadServices = async (masterKey) => {
+            console.log(`📥 Загрузка услуг для ключа: ${masterKey}`);
+            
+            const servicesList = document.getElementById('servicesList');
+            
+            try {
+                const servicesRef = collection(db, "masters", masterKey, "services");
+                const q = query(servicesRef, orderBy("order"));
+                const querySnapshot = await getDocs(q);
+                
+                console.log(`📊 Загружено услуг: ${querySnapshot.size}`);
+                
+                if (querySnapshot.empty) {
+                    servicesList.innerHTML = `
+                        <div class="empty-state">
+                            У вас пока нет услуг.<br>
+                            <button class="add-category-btn" style="margin-top: 1rem;" onclick="document.getElementById('addCategoryBtn').click()">+ Добавить первую категорию</button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const categories = {};
+                querySnapshot.forEach((doc) => {
+                    const service = { id: doc.id, ...doc.data() };
+                    const cat = service.category || 'Без категории';
+                    if (!categories[cat]) categories[cat] = [];
+                    categories[cat].push(service);
+                });
+                
+                console.log(`📁 Найдено категорий: ${Object.keys(categories).length}`);
+                
+                let html = '';
+                for (const [catName, services] of Object.entries(categories)) {
+                    html += `
+                        <div class="service-category" data-category="${catName}">
+                            <div class="category-header" onclick="toggleCategory(this)">
+                                <span class="category-title">
+                                    <input type="text" value="${catName}" onchange="updateCategory('${catName}', this.value)" onclick="event.stopPropagation()">
+                                </span>
+                                <div class="category-actions">
+                                    <button class="action-btn" onclick="event.stopPropagation(); deleteCategory('${catName}')">🗑️</button>
+                                    <button class="action-btn" onclick="event.stopPropagation(); toggleCategory(this.parentElement.parentElement)">▼</button>
+                                </div>
+                            </div>
+                            <div class="services-list" style="display: block;">
+                    `;
+                    
+                    services.forEach(service => {
+                        html += `
+                            <div class="service-item" data-service-id="${service.id}">
+                                <span class="service-name">
+                                    <input type="text" value="${service.name || ''}" onchange="updateService('${service.id}', 'name', this.value)">
+                                </span>
+                                <span class="service-price">
+                                    <input type="number" value="${service.price || 0}" onchange="updateService('${service.id}', 'price', this.value)"> ₽
+                                    <button class="action-btn" onclick="deleteService('${service.id}')">🗑️</button>
+                                </span>
+                            </div>
+                        `;
+                    });
+                    
+                    html += `
+                                <button class="add-service-btn" onclick="addService('${catName}')">+ Добавить услугу</button>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                servicesList.innerHTML = html;
+                
+                window.toggleCategory = (el) => {
+                    const list = el.closest('.service-category').querySelector('.services-list');
+                    list.style.display = list.style.display === 'none' ? 'block' : 'none';
+                };
+                
+            } catch (error) {
+                console.error("❌ Ошибка загрузки услуг:", error);
+                servicesList.innerHTML = '<div class="empty-state">Ошибка загрузки услуг</div>';
+            }
+        };
+    
+        // ===== CRUD операции для услуг =====
+        window.updateCategory = async (oldName, newName) => {
+            if (!currentMasterKey || oldName === newName) return;
+            console.log(`✏️ Переименование категории: ${oldName} -> ${newName}`);
+            
+            const servicesRef = collection(db, "masters", currentMasterKey, "services");
+            const q = query(servicesRef, where("category", "==", oldName));
+            const snapshot = await getDocs(q);
+            
+            snapshot.forEach(async (docSnap) => {
+                await updateDoc(docSnap.ref, { category: newName });
+            });
+            
+            await loadServices(currentMasterKey);
+        };
+        
+        window.deleteCategory = async (catName) => {
+            if (!currentMasterKey || !confirm(`Удалить категорию "${catName}" и все услуги в ней?`)) return;
+            console.log(`🗑️ Удаление категории: ${catName}`);
+            
+            const servicesRef = collection(db, "masters", currentMasterKey, "services");
+            const q = query(servicesRef, where("category", "==", catName));
+            const snapshot = await getDocs(q);
+            
+            snapshot.forEach(async (docSnap) => {
+                await deleteDoc(docSnap.ref);
+            });
+            
+            await loadServices(currentMasterKey);
+        };
+        
+        window.addService = async (category) => {
+            if (!currentMasterKey) return;
+            console.log(`➕ Добавление услуги в категорию: ${category}`);
+            
+            const servicesRef = collection(db, "masters", currentMasterKey, "services");
+            await addDoc(servicesRef, {
+                category: category,
+                name: 'Новая услуга',
+                price: 0,
+                order: Date.now()
+            });
+            
+            await loadServices(currentMasterKey);
+        };
+        
+        window.updateService = async (serviceId, field, value) => {
+            if (!currentMasterKey) return;
+            console.log(`✏️ Обновление услуги ${serviceId}: ${field} = ${value}`);
+            
+            const serviceRef = doc(db, "masters", currentMasterKey, "services", serviceId);
+            await updateDoc(serviceRef, { [field]: field === 'price' ? Number(value) : value });
+        };
+        
+        window.deleteService = async (serviceId) => {
+            if (!currentMasterKey || !confirm('Удалить услугу?')) return;
+            console.log(`🗑️ Удаление услуги: ${serviceId}`);
+            
+            const serviceRef = doc(db, "masters", currentMasterKey, "services", serviceId);
+            await deleteDoc(serviceRef);
+            await loadServices(currentMasterKey);
+        };
+    
+        document.getElementById('addCategoryBtn').addEventListener('click', async () => {
+            if (!currentMasterKey) return;
+            
+            const catName = prompt('Название категории:');
+            if (!catName) return;
+            
+            console.log(`➕ Добавление категории: ${catName}`);
+            
+            const servicesRef = collection(db, "masters", currentMasterKey, "services");
+            await addDoc(servicesRef, {
+                category: catName,
+                name: 'Новая услуга',
+                price: 0,
+                order: Date.now()
+            });
+            
+            await loadServices(currentMasterKey);
+        });
+    
+        // ===== Загрузка заказов для календаря =====
+        const loadOrdersForCalendar = async (masterKey, year, month) => {
+    console.log(`📥 Загрузка заказов из RTDB за ${year}-${month}...`);
+    
+    return new Promise((resolve) => {
+        const chatsRef = ref(rtdb, 'chats');
+        
+        onValue(chatsRef, (snapshot) => {
+            const chats = snapshot.val() || {};
+            
+            const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+            const endDate = `${year}-${String(month).padStart(2, '0')}-31`;
+            
+            const ordersByDate = {};
+            
+            Object.entries(chats).forEach(([chatId, chat]) => {
+                if (chat.masterId === masterKey && 
+                    chat.checkout && 
+                    chat.checkout.status === 'approved' &&
+                    chat.checkout.schedule?.date) {
+                    
+                    const date = chat.checkout.schedule.date;
+                    
+                    if (date >= startDate && date <= endDate) {
+                        if (!ordersByDate[date]) ordersByDate[date] = [];
+                        
+                        ordersByDate[date].push({
+                            id: chatId,
+                            time: chat.checkout.schedule.time || '00:00',
+                            clientId: chat.clientId,
+                            clientName: chat.clientName || chat.clientId || '???',
+                            services: Object.entries(chat.checkout.items || {})
+                            .map(([name, item]) => ({ name, price: item.price, status: item.status })),
+                            total: chat.checkout.total,
+                            status: 'В работе'
+                        });
+                    }
+                }
+            });
+            
+            console.log(`📦 Найдено заказов:`, ordersByDate);
+            resolve(ordersByDate);
+            
+        }, { onlyOnce: true });  // ← только один раз, как get
+    });
+};
+
+
+// ===== Отрисовка календаря =====
+        const renderCalendar = (year, month, orders = {}) => {
+            console.log(`📅 Отрисовка календаря: ${year}-${month}`);
+            
+            currentOrders = orders;
+            monthTitle.textContent = new Date(year, month - 1).toLocaleString('ru', { month: 'long', year: 'numeric' });
+            
+            const firstDay = new Date(year, month - 1, 1).getDay();
+            const daysInMonth = new Date(year, month, 0).getDate();
+            
+            let html = '';
+            
+            for (let i = 0; i < (firstDay === 0 ? 6 : firstDay - 1); i++) {
+                html += '<div class="calendar-day empty"></div>';
+            }
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const hasOrders = orders[dateStr] && orders[dateStr].length > 0;
+                
+                html += `
+                    <div class="calendar-day ${hasOrders ? 'has-orders' : ''}" onclick="showDayDetails('${dateStr}')">
+                        <span class="day-number">${day}</span>
+                        ${hasOrders ? '<span class="busy-indicator">●</span>' : ''}
+                    </div>
+                `;
+            }
+            
+            calendarGrid.innerHTML = html;
+        };
+
+        window.showDayDetails = (dateStr) => {
+    console.log(`📅 Показ деталей для даты: ${dateStr}`);
+    
+    const orders = currentOrders[dateStr] || [];
+    
+    if (orders.length === 0) {
+        dayDetails.innerHTML = `
+            <div class="selected-date">${new Date(dateStr).toLocaleDateString('ru')}</div>
+            <div class="empty-state">Нет записей на этот день</div>
+        `;
+        return;
+    }
+    
+    let slotsHtml = '';
+    
+    orders.forEach(order => {
+        let servicesList = '';
+        if (order.services && order.services.length > 0) {
+            servicesList = order.services.map(s => 
+                `&nbsp;&nbsp;• ${s.name} (${s.price}₽)`
+            ).join('<br>');
+        } else {
+            servicesList = '&nbsp;&nbsp;❌ нет услуг';
+        }
+        
+        // Берем полный clientId без обрезки
+        const fullClientId = order.clientName || '???';
+        // const fullClientId = order.clientId || '???';
+        
+        slotsHtml += `
+            <div class="slot-card">
+                <span class="slot-time">${order.time || '00:00'}</span>
+                <div class="slot-info">
+                    <div class="slot-title">Услуги:</div>
+                    <div style="font-size: 0.9rem; margin: 0.3rem 0;">${servicesList}</div>
+                    <div class="slot-subtitle">Клиент: ${fullClientId}</div>
+                    <div class="slot-subtitle">Сумма: ${order.total}₽</div>
+                </div>
+                <span class="slot-status status-busy">${order.status || 'В работе'}</span>
+            </div>
+        `;
+    });
+    
+    dayDetails.innerHTML = `
+        <div class="selected-date">${new Date(dateStr).toLocaleDateString('ru')}</div>
+        <div class="slots-list">${slotsHtml}</div>
+    `;
+};
+
+        prevMonthBtn.addEventListener('click', async () => {
+            if (currentMonth === 1) {
+                currentYear--;
+                currentMonth = 12;
+            } else {
+                currentMonth--;
+            }
+            console.log(`📅 Переход на месяц: ${currentYear}-${currentMonth}`);
+            
+            if (currentMasterKey) {
+                const orders = await loadOrdersForCalendar(currentMasterKey, currentYear, currentMonth);
+                renderCalendar(currentYear, currentMonth, orders);
+            }
+        });
+        
+        nextMonthBtn.addEventListener('click', async () => {
+            if (currentMonth === 12) {
+                currentYear++;
+                currentMonth = 1;
+            } else {
+                currentMonth++;
+            }
+            console.log(`📅 Переход на месяц: ${currentYear}-${currentMonth}`);
+            
+            if (currentMasterKey) {
+                const orders = await loadOrdersForCalendar(currentMasterKey, currentYear, currentMonth);
+                renderCalendar(currentYear, currentMonth, orders);
+            }
+        });
+   
+            // ===== Загрузка чатов из Realtime Database =====
+const loadMasterChats = (masterKey) => {
+    console.log(`🔍 Загрузка чатов для мастера: ${masterKey}`);
+
+    console.log('🔥 Проверка базы:', rtdb);
+console.log('🔥 Путь к чатам:', 'chats');
+
+const testRef = ref(rtdb, 'chats/599785');
+get(testRef).then(snapshot => {
+    console.log('🔥 Данные чата 599785:', snapshot.val());
+}).catch(err => {
+    console.error('🔥 Ошибка:', err);
+});
+    
+    if (!masterKey) {
+        console.log('❌ Нет ключа мастера');
+        chatList.innerHTML = '<div class="empty-state">Ошибка: нет ключа</div>';
+        return;
+    }
+
+    chatList.innerHTML = '<div class="loading">Загрузка чатов...</div>';
+    
+    const chatsRef = ref(rtdb, 'chats');
+    
+    onValue(chatsRef, (snapshot) => {
+        const data = snapshot.val();
+        console.log('📥 Все чаты из RTDB:', data);
+        
+        if (!data) {
+            console.log('📭 Нет данных в RTDB');
+            chatList.innerHTML = '<div class="empty-state">Пока нет переписок</div>';
+            return;
+        }
+        
+        const masterChats = [];
+        for (const [orderNumber, chat] of Object.entries(data)) {
+            // Проверяем, что чат принадлежит этому мастеру
+            if (chat.masterId === masterKey) {
+                masterChats.push({ 
+                    id: orderNumber,  // теперь id = номер заказа
+                    orderNumber: orderNumber,
+                    ...chat 
+                });
+            }
+        }
+        
+        console.log(`🔎 Найдено чатов для мастера ${masterKey}:`, masterChats.length);
+        
+        if (masterChats.length === 0) {
+            chatList.innerHTML = '<div class="empty-state">Пока нет переписок</div>';
+            return;
+        }
+        
+        // Сортируем по дате создания (новые сверху)
+        masterChats.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        
+        let html = '';
+        masterChats.forEach(chat => {
+            const lastMsg = chat.lastMessage || {};
+            const time = lastMsg.timestamp 
+                ? new Date(lastMsg.timestamp).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' }) 
+                : '';
+            
+            // Используем clientName или номер заказа
+            const clientDisplay = chat.clientName || `Заказ №${chat.orderNumber}`;
+            
+            // Проверка на непрочитанные (от клиента и не прочитано мастером)
+            const unread = lastMsg.senderId !== masterKey && !lastMsg.read ? 1 : 0;
+            
+            const msgText = lastMsg.text 
+                ? (lastMsg.text.length > 30 ? lastMsg.text.slice(0, 30) + '...' : lastMsg.text) 
+                : 'Нет сообщений';
+            
+            // Иконка услуги
+            const serviceIcons = {
+                'counters': '💧',
+                'conditioners': '❄️',
+                'hobs': '🔥',
+                'washing': '🚰',
+                'fridges': '❄️',
+                'other': '🔧'
+            };
+            const icon = serviceIcons[chat.service] || '💬';
+            
+            html += `
+                <div class="chat-item" onclick="openMasterChat('${chat.orderNumber}', '${chat.clientName || ''}')">
+                    <div class="chat-avatar">${icon}</div>
+                    <div class="chat-info">
+                        <div class="chat-name-row">
+                            <span class="chat-name">${clientDisplay}</span>
+                            <span class="chat-time">${time}</span>
+                        </div>
+                        <div class="chat-preview">
+                            <span>${msgText}</span>
+                            ${unread ? '<span class="unread-badge">' + unread + '</span>' : ''}
+                        </div>
+                        <div style="font-size: 0.7rem; color: #8a9bb8; margin-top: 4px;">
+                            Заказ №${chat.orderNumber}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        chatList.innerHTML = html;
+        console.log('✅ Чаты отрисованы');
+        
+    }, (error) => {
+        console.error('❌ Ошибка загрузки чатов:', error);
+        chatList.innerHTML = '<div class="empty-state">Ошибка загрузки</div>';
+    });
+};
+
+        document.getElementById('saveProfileBtn').addEventListener('click', async () => {
+            if (!currentMasterKey) {
+                console.error('❌ Нет ключа мастера');
+                return;
+            }
+            
+            console.log('💾 Сохранение профиля...');
+            
+            const data = {
+                name: document.getElementById('profileName').value,
+                specializations: document.getElementById('profileSpec').value.split(',').map(s => s.trim()),
+                about: document.getElementById('profileAbout').value,
+                phone: document.getElementById('profilePhone').value,
+                city: document.getElementById('profileCity').value,
+                serviceArea: document.getElementById('profileArea').value.split(',').map(s => s.trim()),
+                status: 'online',
+                updatedAt: new Date().toISOString()
+            };
+            
+            try {
+                const masterRef = doc(db, "masters", currentMasterKey);
+                await updateDoc(masterRef, data);
+                console.log('✅ Профиль сохранен');
+                await loadMasterProfile(currentMasterKey);
+                alert('Профиль сохранен');
+            } catch (error) {
+                console.error('❌ Ошибка сохранения:', error);
+                alert('Ошибка сохранения');
+            }
+        });
+    
+        // ===== Вход по ключу =====
+        loginBtn.addEventListener('click', async () => {
+            const key = masterKeyInput.value.trim();
+            console.log(`🔑 Попытка входа с ключом: ${key}`);
+            
+            if (!key) {
+                authError.textContent = 'Введите ключ';
+                return;
+            }
+            
+            authError.textContent = '';
+            currentMasterKey = key;
+            window.currentMasterKey = key;
+            
+            authScreen.style.display = 'none';
+            cabinet.style.display = 'block';
+            
+            await loadMasterProfile(key);
+            await loadServices(key);
+            
+            const orders = await loadOrdersForCalendar(key, currentYear, currentMonth);
+            renderCalendar(currentYear, currentMonth, orders);
+            
+            loadMasterChats(key);
+//             // ТЕСТ: запускаем через 2 секунды после входа
+// setTimeout(() => {
+//     window.testRealtime();
+// }, 2000);
+
+        });
+    
+        // ===== Генерация нового ключа =====
+        generateBtn.addEventListener('click', () => {
+            const newKey = generateKey();
+            masterKeyInput.value = newKey;
+            authError.textContent = '✅ Новый ключ сгенерирован. Сохраните его!';
+            authError.style.color = 'green';
+        });
+    
+        // ===== Выход =====
+        logoutBtn.addEventListener('click', async () => {
+            console.log('👋 Выход из кабинета');
+            
+            if (currentMasterKey) {
+                try {
+                    await updateDoc(doc(db, "masters", currentMasterKey), { 
+                        status: 'offline',
+                        updatedAt: new Date().toISOString()
+                    });
+                    
+                    const chatsRef = ref(rtdb, 'chats');
+                    const chatsQuery = rtdbQuery(chatsRef, orderByChild('masterId'), equalTo(currentMasterKey));
+                    off(chatsQuery);
+                    
+                } catch (error) {
+                    console.error('Ошибка при выходе:', error);
+                }
+            }
+            
+            cabinet.style.display = 'none';
+            authScreen.style.display = 'flex';
+            masterKeyInput.value = '';
+            authError.textContent = '';
+            authError.style.color = 'red';
+            currentMasterKey = null;
+            window.currentMasterKey = null;
+        });
+    
+        // ===== Переключение вкладок =====
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                console.log(`📂 Переключение на вкладку: ${tab.dataset.tab}`);
+                
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                document.querySelector('.price-tab').style.display = 'none';
+                document.querySelector('.calendar-tab').style.display = 'none';
+                document.querySelector('.chats-tab').style.display = 'none';
+                document.querySelector('.profile-tab').style.display = 'none';
+                
+                const tabName = tab.dataset.tab;
+                if (tabName === 'price') document.querySelector('.price-tab').style.display = 'block';
+                if (tabName === 'calendar') document.querySelector('.calendar-tab').style.display = 'block';
+                if (tabName === 'chats') document.querySelector('.chats-tab').style.display = 'block';
+                if (tabName === 'profile') document.querySelector('.profile-tab').style.display = 'block';
+                
+                // При переключении на чаты обновляем список
+                if (tabName === 'chats' && window.currentMasterKey) {
+                    setTimeout(() => {
+                        loadMasterChats(window.currentMasterKey);
+                    }, 100);
+                }
+            });
+        });
+   
+        // ===== ФУНКЦИИ ЧАТА =====
+        window.openMasterChat = function(chatId, clientId) {
+            console.log('💬 Открыт чат:', chatId, 'клиент:', clientId);
+            window.currentChatId = chatId;
+            const chatList = document.getElementById('chatList');
+            chatList.style.display = 'none';
+            
+            let chatContainer = document.getElementById('activeChatContainer');
+            if (!chatContainer) {
+                chatContainer = document.createElement('div');
+                chatContainer.id = 'activeChatContainer';
+                chatContainer.className = 'active-chat two-columns';
+                document.querySelector('.chats-tab').appendChild(chatContainer);
+            }
+            
+            chatContainer.innerHTML = `
+                <div class="chat-column" style="flex: 1;">
+                    <div class="chat-header">
+                        <button class="back-btn" onclick="closeMasterChat()">←</button>
+                        <span class="chat-title">Чат с клиентом ${clientId?.slice(0, 8) || ''}</span>
+                    </div>
+                    <div class="chat-messages" id="masterChatMessages"></div>
+                    <div class="chat-input-wrapper">
+                        <input type="text" class="chat-input" id="masterChatInput" placeholder="Введите сообщение...">
+                        <button class="send-btn" onclick="sendMasterMessage('${chatId}')">→</button>
+                    </div>
+                </div>
+                <div class="checkout-column" style="flex: 1;">
+                    <div class="chat-title">🔧 Чек-билдер</div>
+                    <div class="checkout-items" id="masterCheckoutItems"></div>
+                    <div class="total-row">
+                        <span class="total-label">ИТОГО:</span>
+                        <span class="total-value" id="masterTotalValue">0 ₽</span>
+                    </div>
+                    <div style="display: none; gap: 0.5rem; margin-top: 1rem;">
+                        <button class="order-btn" style="flex: 1;" onclick="approveCheckout('${chatId}')">✅ Утвердить</button>
+                        <button class="order-btn" style="flex: 1; background: #e74c3c;" onclick="rejectCheckout('${chatId}')">❌ Отклонить</button>
+                    </div>
+                </div>
+            `;
+            
+            // ===== ПОДПИСКА НА СООБЩЕНИЯ (REALTIME) =====
+            const messagesDiv = document.getElementById('masterChatMessages');
+            const messagesRef = ref(window.rtdb, `chats/${chatId}/messages`);
+            
+            onValue(messagesRef, (snapshot) => {
+                console.log('📥 onValue сообщения сработал');
+                
+                messagesDiv.innerHTML = ''; // Очищаем
+                
+                if (!snapshot.exists()) {
+                    messagesDiv.innerHTML = '<div class="message">Нет сообщений</div>';
+                    return;
+                }
+                
+                // Преобразуем объект в массив и сортируем по времени
+                const messages = [];
+                snapshot.forEach((child) => {
+                    messages.push({ id: child.key, ...child.val() });
+                });
+                
+                // Сортируем от старых к новым
+                messages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+                
+                // Отрисовываем
+                messages.forEach(msg => {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = `message ${msg.senderId === window.currentMasterKey ? 'master' : 'client'}`;
+                    
+                    const time = msg.timestamp 
+                        ? new Date(msg.timestamp).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' })
+                        : '';
+                    
+                    msgDiv.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <span style="font-weight: bold;">${msg.senderId === window.currentMasterKey ? 'Я' : 'Клиент'}</span>
+                            <span style="font-size: 0.7rem; opacity: 0.7;">${time}</span>
+                        </div>
+                        <div>${msg.text}</div>
+                    `;
+                    
+                    messagesDiv.appendChild(msgDiv);
+                });
+                
+                // Скроллим вниз
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }, (error) => {
+                console.error('❌ Ошибка подписки на сообщения:', error);
+                messagesDiv.innerHTML = '<div class="message">Ошибка загрузки сообщений</div>';
+            });
+
+            // Загружаем чек-билдер (пока оставляем как есть)
+            subscribeToCheckout(chatId);
+        };
+    
+        window.closeMasterChat = function() {
+            const chatList = document.getElementById('chatList');
+            chatList.style.display = 'block';
+            
+            const container = document.getElementById('activeChatContainer');
+            if (container) {
+                container.remove();
+            }
+        };
+                // ===== ЗАГРУЗКА СООБЩЕНИЙ ЧАТА (REALTIME) =====
+        window.loadMasterMessages = function(chatId) {
+            console.log('📥 Подписка на сообщения чата:', chatId);
+            
+            const messagesDiv = document.getElementById('masterChatMessages');
+            if (!messagesDiv) {
+                console.error('❌ masterChatMessages не найден');
+                return;
+            }
+            
+            // Показываем загрузку
+            messagesDiv.innerHTML = '<div class="message">Загрузка сообщений...</div>';
+            
+            // Создаем реф на сообщения
+            const messagesRef = ref(window.rtdb, `chats/${chatId}/messages`);
+            
+            // Подписываемся (предыдущая подписка автоматически отпишется при повторном вызове)
+            onValue(messagesRef, (snapshot) => {
+                console.log('📥 onValue сообщения сработал');
+                
+                messagesDiv.innerHTML = ''; // Очищаем
+                
+                if (!snapshot.exists()) {
+                    messagesDiv.innerHTML = '<div class="message">Нет сообщений</div>';
+                    return;
+                }
+                
+                // Преобразуем объект в массив и сортируем по времени
+                const messages = [];
+                snapshot.forEach((child) => {
+                    messages.push({ id: child.key, ...child.val() });
+                });
+                
+                // Сортируем от старых к новым (для правильного отображения)
+                messages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+                
+                // Отрисовываем
+                messages.forEach(msg => {
+                    const msgDiv = document.createElement('div');
+                    msgDiv.className = `message ${msg.senderId === window.currentMasterKey ? 'master' : 'client'}`;
+                    
+                    const time = msg.timestamp 
+                        ? new Date(msg.timestamp).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' })
+                        : '';
+                    
+                    msgDiv.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <span style="font-weight: bold;">${msg.senderId === window.currentMasterKey ? 'Я' : 'Клиент'}</span>
+                            <span style="font-size: 0.7rem; opacity: 0.7;">${time}</span>
+                        </div>
+                        <div>${msg.text}</div>
+                    `;
+                    
+                    messagesDiv.appendChild(msgDiv);
+                });
+                
+                // Скроллим вниз
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                
+            }, (error) => {
+                console.error('❌ Ошибка подписки на сообщения:', error);
+                messagesDiv.innerHTML = '<div class="message">Ошибка загрузки сообщений</div>';
+            });
+        };
+
+        window.sendMasterMessage = function(chatId) {
+            const input = document.getElementById('masterChatInput');
+            const text = input.value.trim();
+            
+            if (!text || !chatId) return;
+            
+            console.log('📤 Отправка сообщения:', text, 'в чат:', chatId);
+            
+            const message = {
+                senderId: window.currentMasterKey,
+                text: text,
+                timestamp: Date.now(),
+                read: false
+            };
+            
+            fetch(`https://creator-75dac-default-rtdb.europe-west1.firebasedatabase.app/chats/${chatId}/messages.json`, {
+    method: 'POST',
+    body: JSON.stringify(message)
+})
+            .then(r => r.json())
+            .then(() => {
+                console.log('✅ Сообщение отправлено');
+                
+                // Обновляем lastMessage
+                const lastMessage = {
+                    text: text,
+                    timestamp: Date.now(),
+                    senderId: window.currentMasterKey,
+                    read: false
+                };
+                
+                return fetch(`https://creator-75dac-default-rtdb.europe-west1.firebasedatabase.app/chats/${chatId}.json`, {
+    method: 'PATCH',
+    body: JSON.stringify({ lastMessage: lastMessage })
+});
+            })
+            .then(() => {
+                input.value = '';
+                // ВАЖНО: перезагружаем сообщения после отправки
+                window.loadMasterMessages(chatId);
+            })
+            .catch(err => {
+                console.error('❌ Ошибка отправки:', err);
+            });
+        };
+        // ===== ПОДПИСКА НА ЧЕК-БИЛДЕР (REALTIME) =====
+        window.subscribeToCheckout = function (chatId) {
+            console.log('📥 Подписка на чек-билдер чата:', chatId);
+
+            const container = document.getElementById('masterCheckoutItems');
+            const totalSpan = document.getElementById('masterTotalValue');
+
+            if (!container || !totalSpan) {
+                console.error('❌ Элементы чек-билдера не найдены');
+                return;
+            }
+
+            const checkoutRef = ref(window.rtdb, `chats/${chatId}/checkout`);
+
+            onValue(checkoutRef, (snapshot) => {
+                console.log('📥 onValue чек-билдера сработал');
+
+                const data = snapshot.val();
+                container.innerHTML = '';
+
+                if (!data || !data.items) {
+                    container.innerHTML = '<div class="empty-state">Нет услуг</div>';
+                    totalSpan.textContent = '0 ₽';
+                    return;
+                }
+
+                let total = 0;
+
+                Object.entries(data.items).forEach(([name, item]) => {
+                    if (item.status === 'pending' || item.status === 'approved') {
+                        total += item.price;
+
+                        const div = document.createElement('div');
+                        div.className = 'checkout-item';  // ТОЛЬКО КЛАСС, БЕЗ ИНЛАЙН-СТИЛЕЙ
+
+                        const isApproved = item.status === 'approved';
+                        const isDisabled = isApproved ? 'disabled' : '';
+
+                        div.innerHTML = `
+                <div class="checkout-item-content">
+                    <input type="checkbox" 
+                        ${item.status === 'pending' ? 'checked' : ''}
+                        ${isDisabled}
+                        data-service-name="${name}"
+                        class="checkout-checkbox">
+                    <span class="checkout-item-name ${isApproved ? 'approved' : ''}">
+                        ${name}
+                    </span>
+                </div>
+                <div class="checkout-item-price-wrapper">
+                    <span class="checkout-item-price">${item.price.toLocaleString()} ₽</span>
+                </div>
+            `;
+
+                        if (!isApproved) {
+                            div.addEventListener('click', (e) => {
+                                if (e.target.tagName !== 'INPUT') {
+                                    const checkbox = div.querySelector('input[type="checkbox"]');
+                                    if (checkbox && !checkbox.disabled) {
+                                        const event = new Event('change', { bubbles: true });
+                                        checkbox.dispatchEvent(event);
+                                    }
+                                }
+                            });
+
+                            const checkbox = div.querySelector('input[type="checkbox"]');
+                            checkbox.addEventListener('change', () => {
+                                toggleMasterCheckbox(div);
+                            });
+                        }
+
+                        container.appendChild(div);
+                    }
+                });
+
+                totalSpan.textContent = total.toLocaleString() + ' ₽';
+
+                        // ===== НОВЫЙ БЛОК: отображение даты и времени =====
+    if (data.schedule && (data.schedule.date || data.schedule.time)) {
+        const dateDiv = document.createElement('div');
+        dateDiv.className = 'checkout-datetime';
+        
+        const dateStr = data.schedule.date 
+            ? new Date(data.schedule.date).toLocaleDateString('ru') 
+            : 'дата не выбрана';
+        const timeStr = data.schedule.time || 'время не указано';
+        
+        dateDiv.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
+                <span>📅</span>
+                <span style="font-weight: 500;">${dateStr}</span>
+                <span>⏰</span>
+                <span style="font-weight: 500;">${timeStr}</span>
+            </div>
+        `;
+        
+        container.appendChild(dateDiv);
+    }
+
+                // Статус тоже лучше через класс
+                const statusDiv = document.createElement('div');
+                statusDiv.className = `checkout-status ${data.status}`;
+                statusDiv.textContent = data.status === 'approved' ? '✅ Чек утвержден' : '⏳ Чек в процессе обсуждения';
+                container.appendChild(statusDiv);
+
+            }, (error) => {
+                console.error('❌ Ошибка подписки на чек-билдер:', error);
+                container.innerHTML = '<div class="empty-state">Ошибка загрузки</div>';
+            });
+        };
+
+// ===== КЛИК ПО ЧЕКБОКСУ (мастер) =====
+
+window.toggleMasterCheckbox = function(element) {
+    const checkbox = element.querySelector('input[type="checkbox"]');
+    checkbox.checked = !checkbox.checked;
+    updateMasterTotal();
+    
+    if (window.currentChatId) {
+        saveMasterCheckoutToRTDB();
+    }
+};
+
+// ===== ОБНОВЛЕНИЕ СУММЫ (мастер) =====
+
+window.updateMasterTotal = function() {
+    let total = 0;
+    document.querySelectorAll('#masterCheckoutItems .checkout-item input:checked').forEach(cb => {
+        const priceText = cb.closest('.checkout-item').querySelector('.checkout-item-price').textContent;
+        const price = parseInt(priceText.replace(/[^\d]/g, ''));
+        total += price;
+    });
+    document.getElementById('masterTotalValue').textContent = total.toLocaleString() + ' ₽';
+};
+
+// ===== СОХРАНЕНИЕ ЧЕКА В БАЗУ (мастер) =====
+window.saveMasterCheckoutToRTDB = function() {
+    try {
+        const items = {};
+        let total = 0;
+        
+        document.querySelectorAll('#masterCheckoutItems .checkout-item').forEach(item => {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            const nameElement = item.querySelector('.checkout-item-name');
+            
+            if (!nameElement) throw new Error('Не найден .checkout-item-name');
+            
+            const name = nameElement.textContent.trim();
+            const priceText = item.querySelector('.checkout-item-price').textContent;
+            const price = parseInt(priceText.replace(/[^\d]/g, ''));
+            
+            items[name] = {
+                price: price,
+                status: checkbox.checked ? 'pending' : 'removed'
+            };
+            
+            if (checkbox.checked) total += price;
+        });
+        
+        const checkoutData = {
+            items: items,
+            total: total,
+            status: "pending",
+            updatedAt: Date.now(),
+            updatedBy: window.currentMasterKey
+        };
+        
+        console.log('💾 Мастер сохраняет чек-билдер:', JSON.stringify(checkoutData));
+        
+        const checkoutRef = ref(window.rtdb, `chats/${window.currentChatId}/checkout`);
+        set(checkoutRef, checkoutData)
+            .then(() => {
+                console.log('✅ Чек-билдер сохранен мастером');
+            })
+            .catch(err => {
+                console.error('❌ Ошибка set:', err);
+            });
+    } catch (err) {
+        console.error('❌ Ошибка формирования данных:', err);
+    }
+};
+
+        window.approveCheckout = function(chatId) {
+            const checkoutRef = ref(rtdb, `chats/${chatId}/checkout`);
+            
+            onValue(checkoutRef, (snapshot) => {
+                const checkout = snapshot.val();
+                if (!checkout) return;
+                
+                Object.keys(checkout.items || {}).forEach(name => {
+                    if (checkout.items[name].status === 'pending') {
+                        checkout.items[name].status = 'approved';
+                    }
+                });
+                
+                checkout.status = 'approved';
+                checkout.updatedAt = Date.now();
+                checkout.updatedBy = window.currentMasterKey;
+                
+                set(checkoutRef, checkout).then(() => {
+                    console.log('✅ Чек утвержден');
+                    
+                    const msgRef = push(ref(rtdb, `chats/${chatId}/messages`));
+                    set(msgRef, {
+                        senderId: window.currentMasterKey,
+                        text: '✅ Чек утвержден',
+                        timestamp: Date.now(),
+                        read: false
+                    });
+                });
+            }, { onlyOnce: true });
+        };
+    
+        window.rejectCheckout = function(chatId) {
+            const msgRef = push(ref(rtdb, `chats/${chatId}/messages`));
+            set(msgRef, {
+                senderId: window.currentMasterKey,
+                text: '❌ Чек отклонен, нужно обсудить',
+                timestamp: Date.now(),
+                read: false
+            });
+        };
+    
+        console.log('🚀 Приложение готово к работе');
+
+    </script>
+
 </body>
-
 </html>
-
-
